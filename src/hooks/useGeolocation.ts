@@ -11,7 +11,7 @@ export function useGeolocation(): { coords: Coords | null; denied: boolean } {
     navigator.geolocation.getCurrentPosition(
       (p) => setCoords({ lat: p.coords.latitude, lng: p.coords.longitude }),
       () => setDenied(true),
-      { timeout: 8000 },
+      { timeout: 3000, maximumAge: 60000 },
     );
   }, []);
 
