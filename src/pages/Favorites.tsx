@@ -11,15 +11,23 @@ export default function FavoritesPage() {
   useEffect(() => {
     if (!session) return;
     (async () => {
-      const { data } = await supabase
+      const { data: favs } = await supabase
         .from('favorites')
-        .select('business_id, businesses(*, business_heart_points!inner(heart_points, contribution_count))')
+        .select('business_id, businesses(*)')
         .eq('user_id', session.user.id);
-      if (!data) return;
-      setRows(data.map((r: any) => ({
-        ...r.businesses,
-        heart_points: r.businesses.business_heart_points.heart_points,
-        contribution_count: r.businesses.business_heart_points.contribution_count,
+      if (!favs?.length) { setRows([]); return; }
+      const ids = favs.map((f: any) => f.business_id);
+      const { data: pts } = await supabase
+        .from('business_heart_points')
+        .select('*')
+        .in('business_id', ids);
+      const pointsMap = new Map<string, { heart_points: number; contribution_count: number }>(
+        (pts ?? []).map((p: any) => [p.business_id, { heart_points: p.heart_points, contribution_count: p.contribution_count }]),
+      );
+      setRows(favs.map((f: any) => ({
+        ...f.businesses,
+        heart_points: pointsMap.get(f.business_id)?.heart_points ?? 0,
+        contribution_count: pointsMap.get(f.business_id)?.contribution_count ?? 0,
       })));
     })();
   }, [session?.user.id]);

@@ -15,16 +15,19 @@ export default function MapPage() {
 
   useEffect(() => {
     (async () => {
-      const { data } = await supabase
-        .from('businesses')
-        .select('*, business_heart_points!inner(heart_points, contribution_count)')
-        .eq('approved', true);
-      if (!data) return;
+      const [{ data: bizData }, { data: pts }] = await Promise.all([
+        supabase.from('businesses').select('*').eq('approved', true),
+        supabase.from('business_heart_points').select('*'),
+      ]);
+      if (!bizData) return;
+      const pointsMap = new Map<string, { heart_points: number; contribution_count: number }>(
+        (pts ?? []).map((p: any) => [p.business_id, { heart_points: p.heart_points, contribution_count: p.contribution_count }]),
+      );
       setBusinesses(
-        data.map((row: any) => ({
-          ...row,
-          heart_points: row.business_heart_points.heart_points,
-          contribution_count: row.business_heart_points.contribution_count,
+        bizData.map((b: any) => ({
+          ...b,
+          heart_points: pointsMap.get(b.id)?.heart_points ?? 0,
+          contribution_count: pointsMap.get(b.id)?.contribution_count ?? 0,
         })),
       );
     })();
