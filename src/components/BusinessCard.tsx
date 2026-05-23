@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import type { BusinessWithPoints } from '@/types';
 import HeartPointsBadge from './HeartPointsBadge';
+import SDGTag from './SDGTag';
 
 export default function BusinessCard({
   b,
@@ -12,21 +13,22 @@ export default function BusinessCard({
   return (
     <Link
       to={`/business/${b.id}`}
-      className="block bg-white rounded-xl shadow-sm hover:shadow-md transition p-4"
+      className="flex flex-col bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-shadow p-4 min-w-[200px]"
     >
-      <div className="flex items-center gap-3">
-        <div className="w-12 h-12 bg-heart-50 rounded-full flex items-center justify-center font-bold text-heart-600 text-lg shrink-0">
+      <div className="flex items-center gap-3 mb-3">
+        <div className="w-11 h-11 rounded-xl bg-heart-50 flex items-center justify-center font-black text-heart-500 text-lg shrink-0">
           {b.name.slice(0, 1)}
         </div>
-        <div className="flex-1 min-w-0">
-          <div className="font-semibold truncate">{b.name}</div>
-          <div className="flex gap-2 mt-1 flex-wrap">
-            <HeartPointsBadge points={b.heart_points} />
-            {distanceKm !== undefined && (
-              <span className="text-xs text-stone-500 self-center">{distanceKm.toFixed(1)} km</span>
-            )}
-          </div>
+        <div className="min-w-0">
+          <div className="font-bold text-stone-900 leading-tight truncate">{b.name}</div>
+          {distanceKm !== undefined && (
+            <div className="text-xs text-stone-400 mt-0.5">{distanceKm.toFixed(1)} km away</div>
+          )}
         </div>
+      </div>
+      <div className="flex items-center justify-between mt-auto">
+        <HeartPointsBadge points={b.heart_points} />
+        {b.sdg_focus[0] && <SDGTag sdg={b.sdg_focus[0]} />}
       </div>
     </Link>
   );

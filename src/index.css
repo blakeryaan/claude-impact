@@ -5,6 +5,22 @@
 html, body, #root { height: 100%; }
 body { @apply bg-stone-50 text-stone-900 font-sans antialiased; }
 
-/* Leaflet z-index fix so map controls don't bleed over modals */
-.leaflet-pane { z-index: 10; }
-.leaflet-top, .leaflet-bottom { z-index: 20; }
+/* Leaflet — prevent bleed over modals/nav */
+.leaflet-pane        { z-index: 10; }
+.leaflet-top,
+.leaflet-bottom      { z-index: 20; }
+.leaflet-control     { z-index: 20; }
+
+/* Hide default leaflet icon shadows (we use custom markers) */
+.leaflet-marker-shadow { display: none; }
+
+/* Smooth horizontal scroll strip */
+.scroll-strip {
+  @apply flex gap-3 overflow-x-auto pb-2;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scroll-strip::-webkit-scrollbar { display: none; }
+
+/* Safe-area padding for iOS bottom nav */
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
