@@ -59,11 +59,13 @@ src/pages/Favorites.tsx
 
 ### Branch `shop/` — owned by Dev B
 
+- [ ] Task 7b: Google Places enrichment (PlacesAutocomplete component + photo_url rendering on BusinessCard + Profile)
 - [ ] Task 8: Shop login + signup + dashboard + contributions CRUD
 - [ ] Task 9: Admin page
 
 **Files Dev B owns on this branch:**
 ```
+src/components/PlacesAutocomplete.tsx
 src/pages/shop/Login.tsx
 src/pages/shop/Signup.tsx
 src/pages/shop/Dashboard.tsx
@@ -71,6 +73,8 @@ src/pages/shop/Contributions.tsx
 src/pages/shop/ShopProfile.tsx      (stretch; only if Task 8 done)
 src/pages/Admin.tsx
 ```
+
+Task 7b also touches `BusinessCard.tsx` and `Profile.tsx` (to render `photo_url`). Those files are Dev A's. **Coordinate the photo_url render edit:** Dev A includes the `b.photo_url ? <img> : <fallback>` pattern in `BusinessCard.tsx` and `Profile.tsx` from the start (see Task 7b Steps 2-3). Dev B's PlacesAutocomplete just writes the column; no extra render code crosses the boundary.
 
 Dev B also needs the components Dev A creates (`HeartPointsBadge`, etc.). To avoid blocking, **Dev B should create minimal local stubs of those components** at the start of their branch and replace them at merge time:
 

@@ -283,6 +283,9 @@ create table businesses (
   owner_id uuid references profiles(id) on delete set null,
   name text not null,
   logo text,
+  photo_url text,            -- from Google Places (cover photo)
+  google_place_id text,      -- canonical Place reference, nullable
+  address text,              -- human-readable, from Places
   bio text,
   lat double precision not null,
   lng double precision not null,
@@ -520,6 +523,9 @@ export type Business = {
   owner_id: string | null;
   name: string;
   logo: string | null;
+  photo_url: string | null;
+  google_place_id: string | null;
+  address: string | null;
   bio: string | null;
   lat: number;
   lng: number;
@@ -819,6 +825,7 @@ export default function Layout() {
 
 ```tsx
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useJsApiLoader } from '@react-google-maps/api';
 import Layout from '@/components/Layout';
 import MapPage from '@/pages/Map';
 import Profile from '@/pages/Profile';
@@ -834,7 +841,14 @@ import ShopProfile from '@/pages/shop/ShopProfile';
 import ShopContributions from '@/pages/shop/Contributions';
 import Admin from '@/pages/Admin';
 
+const GOOGLE_LIBS: ('places')[] = ['places'];
+
 export default function App() {
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+    libraries: GOOGLE_LIBS,
+  });
+  if (!isLoaded) return <div className="p-8">Loading map services…</div>;
   return (
     <BrowserRouter>
       <Routes>
@@ -858,6 +872,8 @@ export default function App() {
   );
 }
 ```
+
+Loading the Maps JS API once at the app root (with `libraries: ['places']`) makes both `<GoogleMap>` and the Places Autocomplete share a single script tag. Without this, the two would race and console-warn about duplicate loaders.
 
 - [ ] **Step 5: Smoke-test the routes**
 
@@ -951,7 +967,7 @@ export default function BusinessCard({ b, distanceKm }: { b: BusinessWithPoints;
 
 ```tsx
 import { useEffect, useMemo, useState } from 'react';
-import { GoogleMap, LoadScript, Marker, InfoWindow } from '@react-google-maps/api';
+import { GoogleMap, Marker, InfoWindow } from '@react-google-maps/api';
 import { supabase } from '@/lib/supabase';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { haversineKm } from '@/lib/haversine';
@@ -959,7 +975,6 @@ import BusinessCard from '@/components/BusinessCard';
 import type { BusinessWithPoints } from '@/types';
 
 const MELBOURNE_CBD = { lat: -37.8136, lng: 144.9631 };
-const mapKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 export default function MapPage() {
   const [businesses, setBusinesses] = useState<BusinessWithPoints[]>([]);
@@ -1508,6 +1523,88 @@ git commit -m "feat: customer auth, favourites, applause"
 
 ---
 
+## Task 7b: Google Places enrichment (do this BEFORE Task 8)
+
+When a shop applies (Task 8 Signup) or an admin creates a business (Task 9), they should be able to type the business name into an autocomplete that returns Google Places matches and auto-fills name, address, lat/lng, and a cover photo.
+
+**Files:**
+- Create: `src/components/PlacesAutocomplete.tsx`
+- Modify: `src/components/BusinessCard.tsx`, `src/pages/Profile.tsx` (render photo_url)
+
+- [ ] **Step 1: Create `src/components/PlacesAutocomplete.tsx`**
+
+```tsx
+import { useRef } from 'react';
+import { Autocomplete } from '@react-google-maps/api';
+
+export type PlaceResult = {
+  name: string;
+  address: string;
+  lat: number;
+  lng: number;
+  placeId: string;
+  photoUrl: string | null;
+};
+
+export default function PlacesAutocomplete({ onPick }: { onPick: (p: PlaceResult) => void }) {
+  const ref = useRef<google.maps.places.Autocomplete | null>(null);
+  function onLoad(a: google.maps.places.Autocomplete) { ref.current = a; }
+  function onPlaceChanged() {
+    const place = ref.current?.getPlace();
+    if (!place || !place.geometry?.location) return;
+    onPick({
+      name: place.name ?? '',
+      address: place.formatted_address ?? '',
+      lat: place.geometry.location.lat(),
+      lng: place.geometry.location.lng(),
+      placeId: place.place_id ?? '',
+      photoUrl: place.photos?.[0]?.getUrl({ maxWidth: 800, maxHeight: 600 }) ?? null,
+    });
+  }
+  return (
+    <Autocomplete
+      onLoad={onLoad}
+      onPlaceChanged={onPlaceChanged}
+      options={{
+        componentRestrictions: { country: 'au' },
+        fields: ['name', 'formatted_address', 'geometry', 'place_id', 'photos'],
+      }}
+    >
+      <input className="w-full border rounded p-2" placeholder="Search your business on Google…" />
+    </Autocomplete>
+  );
+}
+```
+
+- [ ] **Step 2: Update `src/components/BusinessCard.tsx` to render `photo_url`**
+
+Replace the avatar div with:
+
+```tsx
+{b.photo_url ? (
+  <img src={b.photo_url} alt="" className="w-12 h-12 rounded-full object-cover" />
+) : (
+  <div className="w-12 h-12 bg-stone-200 rounded-full flex items-center justify-center font-bold text-stone-600">
+    {b.name.slice(0, 1)}
+  </div>
+)}
+```
+
+- [ ] **Step 3: Update `src/pages/Profile.tsx` header to render `photo_url`**
+
+In the header block, replace the avatar div with the same `b.photo_url ? <img> : <fallback>` pattern (size `w-20 h-20`).
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add -A
+git commit -m "feat: Google Places autocomplete + photo_url rendering"
+```
+
+Task 8 Step 2 (Shop signup) uses this component to replace the manual name/lat/lng inputs — see the updated step there.
+
+---
+
 ## Task 8: Shop auth + dashboard + contributions
 
 **Files:**
@@ -1549,30 +1646,39 @@ export default function ShopLoginPage() {
 
 - [ ] **Step 2: Implement `src/pages/shop/Signup.tsx` (apply to be listed)**
 
+Uses the `PlacesAutocomplete` component from Task 7b to fill in name + address + lat/lng + photo automatically.
+
 ```tsx
 import { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import PlacesAutocomplete, { PlaceResult } from '@/components/PlacesAutocomplete';
 
 export default function ShopSignupPage() {
   const nav = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [businessName, setBusinessName] = useState('');
+  const [place, setPlace] = useState<PlaceResult | null>(null);
   const [bio, setBio] = useState('');
-  const [lat, setLat] = useState('-37.8136');
-  const [lng, setLng] = useState('144.9631');
   const [err, setErr] = useState<string | null>(null);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault(); setErr(null);
+    if (!place) return setErr('Pick your business from the search dropdown first.');
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) return setErr(error.message);
     if (!data.user) return;
-    await supabase.from('profiles').insert({ id: data.user.id, role: 'shop', display_name: businessName });
+    await supabase.from('profiles').insert({ id: data.user.id, role: 'shop', display_name: place.name });
     const { error: bErr } = await supabase.from('businesses').insert({
-      owner_id: data.user.id, name: businessName, bio,
-      lat: parseFloat(lat), lng: parseFloat(lng), approved: false,
+      owner_id: data.user.id,
+      name: place.name,
+      bio,
+      lat: place.lat,
+      lng: place.lng,
+      address: place.address,
+      google_place_id: place.placeId,
+      photo_url: place.photoUrl,
+      approved: false,
     });
     if (bErr) return setErr(bErr.message);
     nav('/shop/dashboard');
@@ -1581,12 +1687,17 @@ export default function ShopSignupPage() {
     <form onSubmit={onSubmit} className="max-w-md mx-auto p-4 space-y-3">
       <h1 className="text-2xl font-bold">Apply to be listed</h1>
       <p className="text-sm text-stone-600">Your business will appear on the map once an admin approves it.</p>
-      <input className="w-full border rounded p-2" placeholder="Business name" value={businessName} onChange={(e) => setBusinessName(e.target.value)} required />
-      <textarea className="w-full border rounded p-2" placeholder="Bio (one paragraph)" value={bio} onChange={(e) => setBio(e.target.value)} rows={3} required />
-      <div className="grid grid-cols-2 gap-2">
-        <input className="border rounded p-2" placeholder="Latitude"  value={lat} onChange={(e) => setLat(e.target.value)} required />
-        <input className="border rounded p-2" placeholder="Longitude" value={lng} onChange={(e) => setLng(e.target.value)} required />
-      </div>
+      <label className="block">
+        <span className="text-sm font-medium">Find your business</span>
+        <PlacesAutocomplete onPick={setPlace} />
+      </label>
+      {place && (
+        <div className="text-sm bg-stone-100 rounded p-2">
+          <div className="font-semibold">{place.name}</div>
+          <div className="text-stone-600">{place.address}</div>
+        </div>
+      )}
+      <textarea className="w-full border rounded p-2" placeholder="Tell us what you do for the community" value={bio} onChange={(e) => setBio(e.target.value)} rows={3} required />
       <input className="w-full border rounded p-2" type="email" placeholder="Owner email" value={email} onChange={(e) => setEmail(e.target.value)} required />
       <input className="w-full border rounded p-2" type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
       {err && <div className="text-red-600 text-sm">{err}</div>}
