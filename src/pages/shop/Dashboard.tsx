@@ -55,55 +55,70 @@ export default function ShopDashboardPage() {
 
   if (!session || profile?.role !== 'shop') {
     return (
-      <div className="p-8">
-        Shop accounts only. <Link className="underline" to="/shop/login">Sign in</Link>
+      <div className="max-w-2xl mx-auto px-5 pt-20 text-center">
+        <p className="font-mono text-xs uppercase tracking-widest text-muted mb-4">Shop accounts only</p>
+        <Link className="btn-primary px-6 py-2 font-display uppercase" to="/shop/login">Sign in →</Link>
       </div>
     );
   }
-  if (!b) return <div className="p-8 text-stone-500">No business linked to this account yet.</div>;
+
+  if (!b) {
+    return (
+      <div className="max-w-2xl mx-auto px-5 pt-20 text-center">
+        <p className="font-mono text-xs uppercase tracking-widest text-muted">No business linked to this account yet.</p>
+      </div>
+    );
+  }
+
+  const stats = [
+    { label: 'Heart Points', value: points, coral: true },
+    { label: 'Contributions', value: contribCount, coral: false },
+    { label: 'Followers', value: followers, coral: false },
+    { label: 'Applause', value: applauseTotal, coral: false },
+  ];
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <div className="flex items-start justify-between gap-2 mb-1">
-        <h1 className="text-3xl font-bold">{b.name}</h1>
-        <HeartPointsBadge points={points} />
+    <div className="max-w-4xl mx-auto px-5 pt-8 pb-5">
+
+      {/* Header */}
+      <div className="eyebrow mb-2">Business dashboard</div>
+      <div className="flex items-start justify-between gap-4 mb-2">
+        <h1 className="font-display text-4xl md:text-5xl uppercase leading-none">{b.name}</h1>
+        <HeartPointsBadge points={points} size="lg" />
       </div>
-      <p className="text-stone-600 mb-4">
-        {b.approved
-          ? '✅ Approved · live on the map'
-          : '⏳ Pending admin approval — not yet visible publicly'}
+      <p className={`font-mono text-xs uppercase tracking-widest mb-8 ${b.approved ? 'text-coral' : 'text-muted'}`}>
+        {b.approved ? '● Live on the map' : '○ Pending admin approval'}
       </p>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 my-4">
-        {[
-          { label: 'Heart Points', value: points },
-          { label: 'Contributions', value: contribCount },
-          { label: 'Followers', value: followers },
-          { label: 'Applause', value: applauseTotal },
-        ].map(({ label, value }) => (
-          <div key={label} className="bg-white rounded-lg p-3 shadow-sm text-center">
-            <div className="text-2xl font-bold">{value}</div>
-            <div className="text-xs text-stone-500">{label}</div>
+      {/* Stats grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+        {stats.map(({ label, value, coral }) => (
+          <div key={label} className="card p-4 text-center">
+            <div className={`font-display text-3xl uppercase leading-tight ${coral ? 'text-coral' : 'text-ink'}`}>
+              {value}
+            </div>
+            <div className="font-mono text-[10px] uppercase tracking-widest text-muted mt-1">{label}</div>
           </div>
         ))}
       </div>
 
+      {/* Actions */}
       <div className="flex gap-3 flex-wrap">
         <Link
           to="/shop/contributions"
-          className="inline-block bg-heart-500 text-white rounded px-4 py-2 font-semibold"
+          className="btn-primary px-5 py-2.5 font-display uppercase"
         >
-          Add a contribution →
+          Add contribution →
         </Link>
         <Link
           to="/shop/profile"
-          className="inline-block border border-stone-300 bg-white rounded px-4 py-2 font-semibold"
+          className="btn-secondary px-5 py-2.5 font-display uppercase"
         >
           Edit profile
         </Link>
         <Link
           to={`/business/${b.id}`}
-          className="inline-block border border-stone-300 bg-white rounded px-4 py-2 font-semibold"
+          className="btn-secondary px-5 py-2.5 font-display uppercase"
         >
           View public page
         </Link>

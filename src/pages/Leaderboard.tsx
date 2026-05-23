@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
-import HeartPointsBadge from '@/components/HeartPointsBadge';
-import SDGTag from '@/components/SDGTag';
 import type { BusinessWithPoints } from '@/types';
 
 export default function LeaderboardPage() {
@@ -26,68 +24,60 @@ export default function LeaderboardPage() {
     })();
   }, []);
 
-  const medals = ['🥇', '🥈', '🥉'];
-
   return (
-    <div className="max-w-2xl mx-auto px-4 pt-6 pb-4">
+    <div className="max-w-2xl mx-auto px-5 pt-8 pb-5">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-black tracking-tight">Leaderboard 🏆</h1>
-        <p className="text-stone-500 mt-1">Top 10 Melbourne businesses by Heart Points.</p>
-      </div>
+      <div className="eyebrow mb-2">Melbourne's finest</div>
+      <h1 className="font-display text-4xl md:text-6xl uppercase leading-none mb-8">
+        Leaderboard
+      </h1>
 
-      {/* Podium — top 3 */}
-      {top.length >= 3 && (
-        <div className="grid grid-cols-3 gap-2 mb-6">
-          {[top[1], top[0], top[2]].map((b, i) => {
-            const rank = i === 1 ? 0 : i === 0 ? 1 : 2;
-            const heights = ['h-28', 'h-36', 'h-24'];
-            const colors = ['from-stone-300 to-stone-400', 'from-amber-400 to-yellow-500', 'from-orange-300 to-amber-400'];
-            return (
-              <Link key={b.id} to={`/business/${b.id}`} className="flex flex-col items-center gap-1">
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-b ${colors[rank]} flex items-center justify-center font-black text-white text-lg shadow-card`}>
-                  {b.name.slice(0, 1)}
-                </div>
-                <div className="text-xs font-bold text-center leading-tight line-clamp-2 text-stone-700">{b.name}</div>
-                <div className="text-xs text-heart-600 font-semibold">♥ {b.heart_points}</div>
-                <div className={`w-full rounded-t-xl bg-gradient-to-b ${colors[rank]} opacity-30 ${heights[rank]}`} />
-              </Link>
-            );
-          })}
-        </div>
-      )}
-
-      {/* Full list */}
-      <ol className="space-y-2">
+      {/* Guidelines: "Rank in Anton 48px (coral for #1, ink for #2–10), business name in Anton 32px, metric in tabular mono" */}
+      <ol>
         {top.map((b, i) => (
-          <li key={b.id}>
+          <li key={b.id} className={`border-b-2 border-ink ${i === 0 ? 'border-t-2' : ''}`}>
             <Link
               to={`/business/${b.id}`}
-              className="flex items-center gap-3 bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-shadow p-3.5"
+              className="flex items-center gap-4 py-4 group transition-colors hover:bg-paper-2 px-2 -mx-2"
             >
-              <div className="w-8 text-center text-xl shrink-0">
-                {medals[i] ?? <span className="text-base font-black text-stone-400">{i + 1}</span>}
+              {/* Rank */}
+              <div className={`font-display text-4xl w-12 text-right shrink-0 tabular-nums leading-none ${
+                i === 0 ? 'text-coral' : i < 3 ? 'text-ink' : 'text-muted'
+              }`}>
+                {String(i + 1).padStart(2, '0')}
               </div>
-              <div className="w-9 h-9 rounded-xl bg-heart-50 flex items-center justify-center font-black text-heart-500 shrink-0">
+
+              {/* Badge */}
+              <div className={`w-10 h-10 rounded-full border-2 border-ink flex items-center justify-center font-display text-base uppercase shrink-0 ${
+                i === 0 ? 'bg-coral text-ink' : 'bg-paper-2 text-ink'
+              }`}>
                 {b.name.slice(0, 1)}
               </div>
+
+              {/* Name */}
               <div className="flex-1 min-w-0">
-                <div className="font-bold text-stone-900 leading-tight truncate">{b.name}</div>
-                <div className="text-xs text-stone-400 mt-0.5">{b.contribution_count} contributions</div>
-              </div>
-              {b.sdg_focus[0] && (
-                <div className="hidden sm:block shrink-0">
-                  <SDGTag sdg={b.sdg_focus[0]} />
+                <div className="font-display text-lg md:text-2xl uppercase leading-tight truncate">
+                  {b.name}
                 </div>
-              )}
-              <HeartPointsBadge points={b.heart_points} />
+                <div className="font-mono text-[10px] uppercase tracking-widest text-muted mt-0.5">
+                  {b.contribution_count} contribution{b.contribution_count !== 1 ? 's' : ''}
+                </div>
+              </div>
+
+              {/* Points — tabular mono per guidelines */}
+              <div className="text-right shrink-0" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                <div className={`font-mono text-lg font-medium ${i === 0 ? 'text-coral' : 'text-ink'}`}>
+                  {b.heart_points.toLocaleString()}
+                </div>
+                <div className="font-mono text-[9px] uppercase tracking-widest text-muted">pts</div>
+              </div>
             </Link>
           </li>
         ))}
       </ol>
 
       {top.length === 0 && (
-        <div className="text-center text-stone-400 py-16">Loading…</div>
+        <div className="font-mono text-xs uppercase tracking-widest text-muted text-center py-20">Loading…</div>
       )}
     </div>
   );

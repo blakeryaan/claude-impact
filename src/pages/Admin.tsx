@@ -20,7 +20,11 @@ export default function AdminPage() {
     if (profile?.role === 'admin') refresh();
   }, [profile?.role]);
 
-  if (loading) return <div className="p-8 text-stone-500">Loading…</div>;
+  if (loading) return (
+    <div className="flex items-center justify-center h-64">
+      <span className="font-mono text-xs uppercase tracking-widest text-muted">Loading…</span>
+    </div>
+  );
   if (!session || profile?.role !== 'admin') return <Navigate to="/" replace />;
 
   async function approve(id: string) {
@@ -46,28 +50,37 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-4 space-y-8">
+    <div className="max-w-5xl mx-auto px-5 pt-8 pb-5 space-y-10">
+
+      {/* Header */}
+      <div>
+        <div className="eyebrow mb-2">Admin console</div>
+        <h1 className="font-display text-4xl md:text-5xl uppercase leading-none">Directory</h1>
+      </div>
+
+      {/* Pending */}
       <section>
-        <h1 className="text-2xl font-bold mb-3">
-          Pending applications ({pending.length})
-        </h1>
+        <div className="flex items-baseline gap-3 mb-4 border-b-2 border-ink pb-2">
+          <h2 className="font-display text-2xl uppercase">Pending</h2>
+          <span className="font-mono text-xs text-coral uppercase tracking-widest">{pending.length} application{pending.length !== 1 ? 's' : ''}</span>
+        </div>
         <ul className="space-y-2">
           {pending.map((b) => (
-            <li key={b.id} className="bg-white rounded-lg p-3 shadow-sm flex justify-between gap-2">
-              <div>
-                <div className="font-semibold">{b.name}</div>
-                <div className="text-sm text-stone-600">{b.bio}</div>
+            <li key={b.id} className="card p-4 flex justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <div className="font-display text-lg uppercase leading-tight">{b.name}</div>
+                <div className="text-sm text-ink-2 leading-snug mt-1 line-clamp-2">{b.bio}</div>
               </div>
-              <div className="flex gap-2 shrink-0">
+              <div className="flex gap-2 shrink-0 items-start">
                 <button
                   onClick={() => approve(b.id)}
-                  className="bg-green-600 text-white rounded px-3 py-1 text-sm font-medium"
+                  className="btn-primary px-3 py-1.5 font-mono text-xs uppercase tracking-widest"
                 >
                   Approve
                 </button>
                 <button
                   onClick={() => reject(b.id)}
-                  className="bg-red-600 text-white rounded px-3 py-1 text-sm font-medium"
+                  className="btn-secondary px-3 py-1.5 font-mono text-xs uppercase tracking-widest text-coral border-coral"
                 >
                   Reject
                 </button>
@@ -75,22 +88,26 @@ export default function AdminPage() {
             </li>
           ))}
           {pending.length === 0 && (
-            <li className="text-stone-500 text-sm">No pending applications.</li>
+            <li className="font-mono text-xs uppercase tracking-widest text-muted text-center py-8">
+              No pending applications.
+            </li>
           )}
         </ul>
       </section>
 
+      {/* Approved */}
       <section>
-        <h2 className="text-2xl font-bold mb-3">
-          Approved businesses ({approved.length})
-        </h2>
+        <div className="flex items-baseline gap-3 mb-4 border-b-2 border-ink pb-2">
+          <h2 className="font-display text-2xl uppercase">Approved</h2>
+          <span className="font-mono text-xs text-muted uppercase tracking-widest">{approved.length} businesses</span>
+        </div>
         <ul className="space-y-2">
           {approved.map((b) => (
-            <li key={b.id} className="bg-white rounded-lg p-3 shadow-sm flex justify-between items-center gap-2">
-              <div className="font-semibold">
-                {b.name}
+            <li key={b.id} className="card p-4 flex justify-between items-center gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="font-display text-lg uppercase leading-tight truncate">{b.name}</div>
                 {b.is_hero && (
-                  <span className="ml-2 text-xs bg-heart-50 text-heart-600 rounded-full px-2 py-0.5">
+                  <span className="font-mono text-[10px] uppercase tracking-widest text-coral border border-coral rounded-pill px-2 py-0.5 shrink-0">
                     Hero
                   </span>
                 )}
@@ -98,13 +115,13 @@ export default function AdminPage() {
               <div className="flex gap-2 shrink-0">
                 <button
                   onClick={() => toggleHero(b)}
-                  className="text-sm border border-stone-300 rounded px-3 py-1"
+                  className="btn-secondary px-3 py-1.5 font-mono text-xs uppercase tracking-widest"
                 >
                   {b.is_hero ? 'Unmark hero' : 'Mark hero'}
                 </button>
                 <button
                   onClick={() => removeBiz(b.id)}
-                  className="text-sm bg-red-600 text-white rounded px-3 py-1"
+                  className="font-mono text-xs uppercase tracking-widest text-coral border-2 border-coral rounded-pill px-3 py-1.5 hover:bg-coral hover:text-ink transition"
                 >
                   Remove
                 </button>

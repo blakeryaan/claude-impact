@@ -1,30 +1,30 @@
 import { useEffect, useMemo, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { DivIcon } from 'leaflet';
-import { Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { haversineKm } from '@/lib/haversine';
 import BusinessCard from '@/components/BusinessCard';
 import type { BusinessWithPoints } from '@/types';
 
-const MELBOURNE_CBD = { lat: -37.8136, lng: 144.9631 };
+const CBD = { lat: -37.8136, lng: 144.9631 };
 
-function businessMarkerIcon(name: string) {
+// Guidelines: coral fill, 2px ink border, 32px
+function bizIcon(name: string) {
   return new DivIcon({
-    html: `<div style="width:34px;height:34px;background:#ef4444;border-radius:50%;color:white;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;box-shadow:0 2px 8px rgba(0,0,0,0.25);border:2px solid white;">${name[0].toUpperCase()}</div>`,
+    html: `<div style="width:32px;height:32px;background:#E84E1B;border:2px solid #1C1A17;border-radius:50%;color:#1C1A17;display:flex;align-items:center;justify-content:center;font-family:Anton,Impact,sans-serif;font-size:14px;">${name[0].toUpperCase()}</div>`,
     className: '',
-    iconSize: [34, 34],
-    iconAnchor: [17, 17],
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
     popupAnchor: [0, -18],
   });
 }
 
-const userDot = new DivIcon({
-  html: `<div style="width:16px;height:16px;background:#2563eb;border-radius:50%;box-shadow:0 0 0 4px rgba(37,99,235,0.25);border:2px solid white;"></div>`,
+const userIcon = new DivIcon({
+  html: `<div style="width:14px;height:14px;background:#1C1A17;border:2px solid #F2EDE3;border-radius:50%;box-shadow:0 0 0 3px rgba(28,26,23,0.2);"></div>`,
   className: '',
-  iconSize: [16, 16],
-  iconAnchor: [8, 8],
+  iconSize: [14, 14],
+  iconAnchor: [7, 7],
 });
 
 function RecenterMap({ coords }: { coords: { lat: number; lng: number } }) {
@@ -53,7 +53,7 @@ export default function MapPage() {
     })();
   }, []);
 
-  const centre = coords ?? MELBOURNE_CBD;
+  const centre = coords ?? CBD;
 
   const nearby = useMemo(() => {
     if (!coords) return [];
@@ -63,15 +63,15 @@ export default function MapPage() {
       .slice(0, 8);
   }, [coords, businesses]);
 
-  const sidebarItems = coords
+  const strip = coords
     ? nearby
     : businesses.slice(0, 8).map((b) => ({ b, d: undefined as number | undefined }));
 
   return (
-    <div className="flex flex-col md:grid md:grid-cols-[2fr_1fr] md:gap-4 md:p-4 md:max-w-6xl md:mx-auto h-[calc(100vh-3.5rem-5rem)] md:h-auto">
+    <div className="flex flex-col md:grid md:grid-cols-[2fr_1fr] md:gap-4 md:p-5 md:max-w-6xl md:mx-auto h-[calc(100dvh-3.5rem-4rem)] md:h-auto">
 
       {/* Map */}
-      <div className="relative flex-1 md:h-[75vh] md:rounded-2xl overflow-hidden shadow-card">
+      <div className="relative flex-1 md:h-[76vh] overflow-hidden border-b-2 md:border-2 border-ink md:rounded-md">
         <MapContainer
           center={[centre.lat, centre.lng]}
           zoom={14}
@@ -83,48 +83,46 @@ export default function MapPage() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <RecenterMap coords={centre} />
-          {coords && <Marker position={[coords.lat, coords.lng]} icon={userDot} />}
+          {coords && <Marker position={[coords.lat, coords.lng]} icon={userIcon} />}
           {businesses.map((b) => (
-            <Marker key={b.id} position={[b.lat, b.lng]} icon={businessMarkerIcon(b.name)}>
+            <Marker key={b.id} position={[b.lat, b.lng]} icon={bizIcon(b.name)}>
               <Popup>
-                <div className="text-sm min-w-[160px]">
-                  <div className="font-bold mb-0.5">{b.name}</div>
-                  <div className="text-heart-600 font-semibold text-xs mb-1">♥ {b.heart_points} pts</div>
-                  <Link to={`/business/${b.id}`} className="text-blue-600 underline text-xs">
+                <div style={{ fontFamily: 'Space Grotesk, sans-serif', minWidth: 160 }}>
+                  <div style={{ fontFamily: 'Anton, Impact, sans-serif', fontSize: 14, textTransform: 'uppercase', marginBottom: 2 }}>{b.name}</div>
+                  <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#E84E1B' }}>♥ {b.heart_points} pts</div>
+                  <a href={`/business/${b.id}`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#1C1A17', textDecoration: 'underline', display: 'block', marginTop: 6 }}>
                     View profile →
-                  </Link>
+                  </a>
                 </div>
               </Popup>
             </Marker>
           ))}
         </MapContainer>
 
-        {/* Floating pill */}
-        <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 bg-white/90 backdrop-blur-sm rounded-full px-4 py-1.5 shadow-card text-xs font-semibold text-stone-700">
-          {businesses.length} businesses · Melbourne
+        {/* Business count pill */}
+        <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 bg-paper border-2 border-ink rounded-pill px-4 py-1 font-mono text-xs uppercase tracking-widest">
+          {businesses.length} businesses · Melbourne CBD
         </div>
       </div>
 
-      {/* Nearby strip — horizontal on mobile, vertical sidebar on desktop */}
+      {/* Nearby strip */}
       <aside className="md:overflow-y-auto">
         <div className="px-4 pt-3 pb-1 md:px-0 md:pt-0">
-          <h2 className="text-sm font-bold text-stone-500 uppercase tracking-wide mb-2">
+          <div className="eyebrow mb-2">
             {coords ? 'Nearby' : denied ? 'Businesses' : 'Locating…'}
-          </h2>
+          </div>
         </div>
-
-        {/* Mobile: horizontal scroll */}
+        {/* Mobile: horizontal */}
         <div className="scroll-strip px-4 md:hidden">
-          {sidebarItems.map(({ b, d }) => (
+          {strip.map(({ b, d }) => (
             <div key={b.id} className="w-52 shrink-0">
               <BusinessCard b={b} distanceKm={d} />
             </div>
           ))}
         </div>
-
-        {/* Desktop: vertical list */}
+        {/* Desktop: vertical */}
         <div className="hidden md:flex flex-col gap-2">
-          {sidebarItems.map(({ b, d }) => (
+          {strip.map(({ b, d }) => (
             <BusinessCard key={b.id} b={b} distanceKm={d} />
           ))}
         </div>

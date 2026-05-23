@@ -38,66 +38,100 @@ export default function ShopSignupPage() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="max-w-md mx-auto p-4 mt-8 space-y-3">
-      <h1 className="text-2xl font-bold">Apply to be listed</h1>
-      <p className="text-sm text-stone-600">
-        Your business will appear on the map once an admin approves it.
-      </p>
-      <input
-        className="w-full border border-stone-300 rounded p-2"
-        placeholder="Business name"
-        value={businessName}
-        onChange={(e) => setBusinessName(e.target.value)}
-        required
-      />
-      <textarea
-        className="w-full border border-stone-300 rounded p-2"
-        placeholder="What community good do you do? (one paragraph)"
-        value={bio}
-        onChange={(e) => setBio(e.target.value)}
-        rows={3}
-        required
-      />
-      <div className="grid grid-cols-2 gap-2">
-        <input
-          className="border border-stone-300 rounded p-2"
-          placeholder="Latitude (e.g. -37.81)"
-          value={lat}
-          onChange={(e) => setLat(e.target.value)}
-          required
-        />
-        <input
-          className="border border-stone-300 rounded p-2"
-          placeholder="Longitude (e.g. 144.96)"
-          value={lng}
-          onChange={(e) => setLng(e.target.value)}
-          required
-        />
+    <div className="min-h-[70vh] flex items-center justify-center px-5 py-10">
+      <div className="w-full max-w-md">
+
+        <div className="text-center mb-10">
+          <div className="eyebrow mb-1">Business portal</div>
+          <h1 className="font-display text-4xl uppercase leading-none mb-1">Apply to be listed</h1>
+          <p className="font-serif italic text-muted text-sm">
+            You'll appear on the map once an admin approves your application.
+          </p>
+        </div>
+
+        <form onSubmit={onSubmit} className="card p-6 space-y-4">
+          <div>
+            <label className="eyebrow block mb-1.5">Business name</label>
+            <input
+              className="w-full border-2 border-ink bg-paper rounded-sm px-3 py-2.5 text-sm font-sans focus:outline-none focus:border-coral transition"
+              placeholder="Brunswick Bike Co."
+              value={businessName}
+              onChange={(e) => setBusinessName(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label className="eyebrow block mb-1.5">What community good do you do?</label>
+            <textarea
+              className="w-full border-2 border-ink bg-paper rounded-sm px-3 py-2.5 text-sm font-sans focus:outline-none focus:border-coral transition resize-none"
+              placeholder="One paragraph describing your impact…"
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              rows={3}
+              required
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="eyebrow block mb-1.5">Latitude</label>
+              <input
+                className="w-full border-2 border-ink bg-paper rounded-sm px-3 py-2.5 text-sm font-sans focus:outline-none focus:border-coral transition"
+                placeholder="-37.81"
+                value={lat}
+                onChange={(e) => setLat(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label className="eyebrow block mb-1.5">Longitude</label>
+              <input
+                className="w-full border-2 border-ink bg-paper rounded-sm px-3 py-2.5 text-sm font-sans focus:outline-none focus:border-coral transition"
+                placeholder="144.96"
+                value={lng}
+                onChange={(e) => setLng(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+          <div className="border-t-2 border-ink/20 pt-4">
+            <div className="eyebrow mb-3">Account details</div>
+            <div className="space-y-3">
+              <div>
+                <label className="eyebrow block mb-1.5">Owner email</label>
+                <input
+                  className="w-full border-2 border-ink bg-paper rounded-sm px-3 py-2.5 text-sm font-sans focus:outline-none focus:border-coral transition"
+                  type="email"
+                  placeholder="owner@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <div>
+                <label className="eyebrow block mb-1.5">Password</label>
+                <input
+                  className="w-full border-2 border-ink bg-paper rounded-sm px-3 py-2.5 text-sm font-sans focus:outline-none focus:border-coral transition"
+                  type="password"
+                  placeholder="6+ characters"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={6}
+                />
+              </div>
+            </div>
+          </div>
+          {err && (
+            <div className="font-mono text-xs text-coral border border-coral rounded-sm px-3 py-2">{err}</div>
+          )}
+          <button
+            className="btn-primary w-full py-3 font-display text-lg uppercase disabled:opacity-50"
+            disabled={submitting}
+          >
+            {submitting ? 'Submitting…' : 'Apply'}
+          </button>
+        </form>
       </div>
-      <input
-        className="w-full border border-stone-300 rounded p-2"
-        type="email"
-        placeholder="Owner email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
-      <input
-        className="w-full border border-stone-300 rounded p-2"
-        type="password"
-        placeholder="Password (6+ chars)"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-        minLength={6}
-      />
-      {err && <div className="text-red-600 text-sm">{err}</div>}
-      <button
-        className="w-full bg-heart-500 text-white rounded p-2 font-semibold disabled:opacity-50"
-        disabled={submitting}
-      >
-        {submitting ? 'Submitting…' : 'Apply'}
-      </button>
-    </form>
+    </div>
   );
 }

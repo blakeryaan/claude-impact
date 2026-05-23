@@ -2,25 +2,111 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body, #root { height: 100%; }
-body { @apply bg-stone-50 text-stone-900 font-sans antialiased; }
+:root {
+  --paper:   #F2EDE3;
+  --paper-2: #E8E0D0;
+  --ink:     #1C1A17;
+  --ink-2:   #2A2722;
+  --muted:   #6B655A;
+  --coral:   #E84E1B;
+  --ease-std:  cubic-bezier(0.4, 0.0, 0.2, 1);
+  --ease-slow: cubic-bezier(0.2, 0.0, 0.0, 1);
+}
 
-/* Leaflet — prevent bleed over modals/nav */
+html, body, #root { height: 100%; }
+
+body {
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Focus ring — coral, 3px, 2px offset */
+*:focus-visible {
+  outline: 3px solid var(--coral);
+  outline-offset: 2px;
+}
+
+/* Leaflet — prevent bleed over nav */
 .leaflet-pane        { z-index: 10; }
 .leaflet-top,
 .leaflet-bottom      { z-index: 20; }
 .leaflet-control     { z-index: 20; }
-
-/* Hide default leaflet icon shadows (we use custom markers) */
 .leaflet-marker-shadow { display: none; }
+.leaflet-popup-content-wrapper {
+  border-radius: 12px !important;
+  border: 2px solid var(--ink) !important;
+  box-shadow: none !important;
+  background: var(--paper) !important;
+}
+.leaflet-popup-tip { background: var(--ink) !important; }
 
-/* Smooth horizontal scroll strip */
+/* Horizontal scroll strip */
 .scroll-strip {
-  @apply flex gap-3 overflow-x-auto pb-2;
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 .scroll-strip::-webkit-scrollbar { display: none; }
 
-/* Safe-area padding for iOS bottom nav */
+/* Safe-area padding for iOS home bar */
 .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+/* Anton display utility */
+.font-display { font-family: 'Anton', Impact, sans-serif; }
+
+/* Eyebrow label pattern */
+.eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--coral);
+}
+
+/* Card base — ink border, no shadow, hover lift */
+.card {
+  background: var(--paper-2);
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  transition: transform 160ms var(--ease-std);
+}
+.card:hover { transform: translateY(-3px); }
+
+/* Button base */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--coral);
+  color: var(--ink);
+  border: 2px solid var(--coral);
+  border-radius: 100px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  padding: 10px 24px;
+  transition: opacity 160ms var(--ease-std);
+}
+.btn-primary:hover { opacity: 0.88; }
+.btn-primary:disabled { opacity: 0.45; }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: 100px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 10px 24px;
+  transition: background 160ms var(--ease-std);
+}
+.btn-secondary:hover { background: var(--paper-2); }

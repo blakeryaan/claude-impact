@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import SDGTag from '@/components/SDGTag';
 import type { Business } from '@/types';
+import { businessPhoto } from '@/lib/photos';
 
 export default function HeroesPage() {
   const [heroes, setHeroes] = useState<Business[]>([]);
@@ -13,59 +14,52 @@ export default function HeroesPage() {
   }, []);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 pt-6 pb-4">
+    <div className="max-w-6xl mx-auto px-5 pt-8 pb-5">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-black tracking-tight">Heroes ⭐</h1>
-        <p className="text-stone-500 mt-1">
-          Award-winning Melbourne businesses driving real community impact.
-        </p>
-      </div>
+      <div className="eyebrow mb-2">Community heroes</div>
+      <h1 className="font-display text-4xl md:text-6xl uppercase leading-none mb-1">
+        Heroes
+      </h1>
+      <p className="font-serif italic text-muted text-lg mb-8">
+        Award-winning Melbourne businesses driving real community impact.
+      </p>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {heroes.map((b, i) => {
-          const gradients = [
-            'from-heart-500 to-rose-600',
-            'from-purple-500 to-indigo-600',
-            'from-emerald-500 to-teal-600',
-            'from-amber-500 to-orange-600',
-            'from-blue-500 to-cyan-600',
-            'from-pink-500 to-rose-500',
-          ];
-          const grad = gradients[i % gradients.length];
-          return (
-            <Link
-              key={b.id}
-              to={`/business/${b.id}`}
-              className="group block bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-shadow overflow-hidden"
-            >
-              {/* Colour band */}
-              <div className={`bg-gradient-to-r ${grad} p-5 pb-4`}>
-                <div className="w-14 h-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-3xl font-black text-white mb-3">
-                  {b.name.slice(0, 1)}
-                </div>
-                <h2 className="text-white font-black text-lg leading-tight">{b.name}</h2>
-              </div>
+        {heroes.map((b) => (
+          <Link
+            key={b.id}
+            to={`/business/${b.id}`}
+            className="card block overflow-hidden group"
+          >
+            {/* Cover photo */}
+            <div className="h-44 overflow-hidden border-b-2 border-ink">
+              <img
+                src={businessPhoto(b.id, 600, 352)}
+                alt=""
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                loading="lazy"
+              />
+            </div>
 
-              {/* Card body */}
-              <div className="p-4">
-                <p className="text-sm text-stone-600 leading-relaxed line-clamp-2 mb-3">{b.bio}</p>
-                {b.awards.length > 0 && (
-                  <p className="text-xs text-stone-400 font-medium mb-3">{b.awards.join(' · ')}</p>
-                )}
-                <div className="flex flex-wrap gap-1.5">
-                  {b.sdg_focus.slice(0, 2).map((sdg) => (
-                    <SDGTag key={sdg} sdg={sdg} />
-                  ))}
-                </div>
+            {/* Body */}
+            <div className="p-4">
+              {b.awards[0] && (
+                <div className="eyebrow mb-0.5">{b.awards[0]}</div>
+              )}
+              <h2 className="font-display text-xl uppercase leading-tight mb-2">{b.name}</h2>
+              <p className="text-sm text-ink-2 leading-relaxed line-clamp-2 mb-3">{b.bio}</p>
+              <div className="flex flex-wrap gap-1.5">
+                {b.sdg_focus.slice(0, 2).map((sdg) => (
+                  <SDGTag key={sdg} sdg={sdg} />
+                ))}
               </div>
-            </Link>
-          );
-        })}
+            </div>
+          </Link>
+        ))}
       </div>
 
       {heroes.length === 0 && (
-        <div className="text-center text-stone-400 py-16">Loading…</div>
+        <div className="font-mono text-xs uppercase tracking-widest text-muted text-center py-20">Loading…</div>
       )}
     </div>
   );

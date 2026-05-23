@@ -13,50 +13,67 @@ const MAX_PCT = TOP_SDGS[0][1];
 
 export default function AboutPage() {
   return (
-    <div className="max-w-2xl mx-auto px-4 pt-6 pb-4">
-      <h1 className="text-3xl font-black tracking-tight mb-1">Why Good Sh*t exists 💡</h1>
-      <p className="text-stone-500 mb-6">
-        Melburnians care deeply about social impact — and they're already voting with their wallets.
-        Here's the data behind the app.
+    <div className="max-w-2xl mx-auto px-5 pt-8 pb-5">
+
+      {/* Header — guidelines hierarchy pattern */}
+      <div className="eyebrow mb-2">The evidence</div>
+      <h1 className="font-display text-4xl md:text-6xl uppercase leading-none mb-1">
+        Why This Exists
+      </h1>
+      <p className="font-serif italic text-muted text-lg mb-10">
+        Melbourne people care deeply about social impact — and they're already voting with their wallets.
       </p>
 
-      {/* Big stat cards */}
-      <div className="grid grid-cols-2 gap-3 mb-8">
-        <div className="bg-gradient-to-br from-heart-500 to-heart-700 rounded-2xl p-5 text-white">
-          <div className="text-4xl font-black">{MELBOURNE_SDG_AWARENESS_PCT}%</div>
-          <div className="text-sm font-semibold mt-1 text-white/90">SDG-aware</div>
-          <div className="text-xs text-white/70 mt-1 leading-snug">
+      {/* Impact counters — "Anton 96–160px, coral, JetBrains Mono label" */}
+      <div className="grid grid-cols-2 gap-4 mb-10">
+        <div className="card p-5 bg-ink border-ink">
+          <div className="eyebrow mb-2 !text-paper/50">SDG awareness</div>
+          <div className="font-display text-6xl text-coral leading-none tabular-nums">
+            {MELBOURNE_SDG_AWARENESS_PCT}%
+          </div>
+          <div className="font-mono text-[10px] uppercase tracking-widest text-paper/70 mt-2 leading-snug">
+            of Melburnians
+          </div>
+          <p className="font-serif italic text-paper/60 text-sm mt-2">
             vs 18.4% in regional Victoria
-          </div>
+          </p>
         </div>
-        <div className="bg-white rounded-2xl p-5 shadow-card border border-stone-100">
-          <div className="text-4xl font-black text-stone-900">{MELBOURNE_BRAND_SWITCH_PCT}%</div>
-          <div className="text-sm font-semibold text-stone-700 mt-1">switched brand</div>
-          <div className="text-xs text-stone-400 mt-1 leading-snug">
-            for social/env reasons in last 3 months
+        <div className="card p-5">
+          <div className="eyebrow mb-2">Switched brand</div>
+          <div className="font-display text-6xl text-coral leading-none tabular-nums">
+            {MELBOURNE_BRAND_SWITCH_PCT}%
           </div>
+          <div className="font-mono text-[10px] uppercase tracking-widest text-muted mt-2 leading-snug">
+            in last 3 months
+          </div>
+          <p className="font-serif italic text-muted text-sm mt-2">
+            for social or environmental reasons
+          </p>
         </div>
       </div>
 
       {/* SDG bar chart */}
-      <div className="bg-white rounded-2xl shadow-card border border-stone-100 p-5 mb-6">
-        <h2 className="font-black text-lg mb-1">What Melburnians care about most</h2>
-        <p className="text-xs text-stone-400 mb-4">
+      <div className="card p-5 mb-8">
+        <div className="eyebrow mb-1">Community priorities</div>
+        <h2 className="font-display text-2xl uppercase mb-1">What Melburnians care about most</h2>
+        <p className="font-mono text-[10px] uppercase tracking-widest text-muted mb-6">
           % ranking each SDG in personal top 3 · n={MELBOURNE_N.toLocaleString()}
         </p>
-        <ol className="space-y-3">
+        <ol className="space-y-4">
           {TOP_SDGS.map(([sdg, pct], i) => (
             <li key={sdg} className="flex items-center gap-3">
-              <span className="text-stone-400 font-bold text-sm w-5 text-right shrink-0">{i + 1}</span>
+              <span className="font-mono text-xs text-coral w-5 text-right shrink-0 tabular-nums">
+                {String(i + 1).padStart(2, '0')}
+              </span>
               <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-baseline mb-1">
-                  <span className="text-sm font-semibold text-stone-800 truncate">{sdg}</span>
-                  <span className="text-sm font-black text-heart-600 ml-2 shrink-0">{pct}%</span>
+                <div className="flex justify-between items-baseline mb-1.5">
+                  <span className="text-sm font-semibold text-ink truncate">{sdg}</span>
+                  <span className="font-mono text-xs text-muted ml-2 shrink-0 tabular-nums">{pct}%</span>
                 </div>
-                <div className="h-2 bg-stone-100 rounded-full overflow-hidden">
+                <div className="h-1.5 bg-paper-2 rounded-full border border-ink/10 overflow-hidden">
                   <div
-                    className="h-2 bg-gradient-to-r from-heart-500 to-heart-600 rounded-full transition-all"
-                    style={{ width: `${(pct / MAX_PCT) * 100}%` }}
+                    className="h-full bg-coral rounded-full"
+                    style={{ width: `${(pct / MAX_PCT) * 100}%`, transition: 'width 600ms cubic-bezier(0.2, 0.0, 0.0, 1)' }}
                   />
                 </div>
               </div>
@@ -65,9 +82,10 @@ export default function AboutPage() {
         </ol>
       </div>
 
-      <p className="text-xs text-stone-400 text-center">
-        Source: Glow / Global Market Signals SDG Demand Data Pack · 12,268 AU respondents ·
-        3 waves Jul 2025–Mar 2026 · Melbourne subset n={MELBOURNE_N.toLocaleString()}
+      <p className="font-mono text-[10px] uppercase tracking-widest text-muted text-center border-t-2 border-ink pt-4">
+        Source: Glow / Global Market Signals SDG Demand Data Pack ·
+        12,268 AU respondents · 3 waves Jul 2025–Mar 2026 ·
+        Melbourne subset n={MELBOURNE_N.toLocaleString()}
       </p>
     </div>
   );

@@ -57,55 +57,100 @@ export default function ShopProfilePage() {
   }
 
   if (!session) return <Navigate to="/shop/login" replace />;
-  if (profile?.role !== 'shop') return <div className="p-8">Shop accounts only.</div>;
+  if (profile?.role !== 'shop') return (
+    <div className="max-w-2xl mx-auto px-5 pt-20 text-center">
+      <p className="font-mono text-xs uppercase tracking-widest text-muted">Shop accounts only.</p>
+    </div>
+  );
 
   return (
-    <form onSubmit={onSubmit} className="max-w-xl mx-auto p-4 space-y-3">
-      <h1 className="text-2xl font-bold">Edit business profile</h1>
-      <input
-        className="w-full border border-stone-300 rounded p-2"
-        placeholder="Business name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        required
-      />
-      <textarea
-        className="w-full border border-stone-300 rounded p-2"
-        placeholder="Bio"
-        value={bio}
-        onChange={(e) => setBio(e.target.value)}
-        rows={3}
-        required
-      />
-      <div className="grid grid-cols-2 gap-2">
-        <input className="border border-stone-300 rounded p-2" placeholder="Latitude" value={lat} onChange={(e) => setLat(e.target.value)} required />
-        <input className="border border-stone-300 rounded p-2" placeholder="Longitude" value={lng} onChange={(e) => setLng(e.target.value)} required />
-      </div>
-      <div>
-        <div className="text-sm font-medium mb-1">SDG focus areas</div>
-        <div className="flex flex-wrap gap-2">
-          {ALL_SDGS.map((sdg) => (
-            <button
-              key={sdg}
-              type="button"
-              onClick={() => toggleSdg(sdg)}
-              className={`text-xs rounded-full px-2 py-0.5 border transition ${
-                sdgFocus.includes(sdg)
-                  ? 'bg-heart-500 text-white border-heart-500'
-                  : 'bg-white border-stone-300 hover:bg-stone-100'
-              }`}
-            >
-              {sdg}
-            </button>
-          ))}
+    <div className="max-w-xl mx-auto px-5 pt-8 pb-5">
+
+      <div className="eyebrow mb-2">Business portal</div>
+      <h1 className="font-display text-4xl uppercase leading-none mb-8">Edit Profile</h1>
+
+      <form onSubmit={onSubmit} className="space-y-4">
+        <div className="card p-5 space-y-4">
+          <div>
+            <label className="eyebrow block mb-1.5">Business name</label>
+            <input
+              className="w-full border-2 border-ink bg-paper rounded-sm px-3 py-2.5 text-sm font-sans focus:outline-none focus:border-coral transition"
+              placeholder="Business name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label className="eyebrow block mb-1.5">Bio</label>
+            <textarea
+              className="w-full border-2 border-ink bg-paper rounded-sm px-3 py-2.5 text-sm font-sans focus:outline-none focus:border-coral transition resize-none"
+              placeholder="What community good do you do?"
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              rows={3}
+              required
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="eyebrow block mb-1.5">Latitude</label>
+              <input
+                className="w-full border-2 border-ink bg-paper rounded-sm px-3 py-2.5 text-sm font-sans focus:outline-none focus:border-coral transition"
+                placeholder="-37.81"
+                value={lat}
+                onChange={(e) => setLat(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label className="eyebrow block mb-1.5">Longitude</label>
+              <input
+                className="w-full border-2 border-ink bg-paper rounded-sm px-3 py-2.5 text-sm font-sans focus:outline-none focus:border-coral transition"
+                placeholder="144.96"
+                value={lng}
+                onChange={(e) => setLng(e.target.value)}
+                required
+              />
+            </div>
+          </div>
         </div>
-      </div>
-      {err && <div className="text-red-600 text-sm">{err}</div>}
-      {saved && <div className="text-green-600 text-sm">Saved!</div>}
-      <button className="bg-heart-500 text-white rounded px-4 py-2 font-semibold">Save</button>
-      <p className="text-sm text-stone-500">
-        <Link to="/shop/dashboard" className="underline">← Back to dashboard</Link>
-      </p>
-    </form>
+
+        {/* SDG picker */}
+        <div className="card p-5">
+          <div className="eyebrow mb-3">SDG focus areas</div>
+          <div className="flex flex-wrap gap-2">
+            {ALL_SDGS.map((sdg) => (
+              <button
+                key={sdg}
+                type="button"
+                onClick={() => toggleSdg(sdg)}
+                className={`font-mono text-[10px] uppercase tracking-wider rounded-pill px-2.5 py-1 border-2 transition ${
+                  sdgFocus.includes(sdg)
+                    ? 'bg-coral text-ink border-coral'
+                    : 'bg-transparent text-muted border-muted hover:border-ink hover:text-ink'
+                }`}
+              >
+                {sdg}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {err && (
+          <div className="font-mono text-xs text-coral border border-coral rounded-sm px-3 py-2">{err}</div>
+        )}
+        {saved && (
+          <div className="font-mono text-xs text-coral border border-coral rounded-sm px-3 py-2">Saved!</div>
+        )}
+
+        <div className="flex gap-3 items-center">
+          <button className="btn-primary px-5 py-2.5 font-display uppercase">Save changes</button>
+          <Link to="/shop/dashboard" className="font-mono text-xs uppercase tracking-widest text-muted hover:text-ink transition">
+            ← Dashboard
+          </Link>
+        </div>
+      </form>
+    </div>
   );
 }

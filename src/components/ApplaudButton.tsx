@@ -10,37 +10,21 @@ export default function ApplaudButton({ contributionId }: { contributionId: stri
   const [prompt, setPrompt] = useState(false);
 
   useEffect(() => {
-    supabase
-      .from('applause')
-      .select('user_id', { count: 'exact', head: true })
-      .eq('contribution_id', contributionId)
+    supabase.from('applause').select('user_id', { count: 'exact', head: true }).eq('contribution_id', contributionId)
       .then(({ count: c }) => setCount(c ?? 0));
     if (!session) { setOn(false); return; }
-    supabase
-      .from('applause')
-      .select('user_id')
-      .eq('user_id', session.user.id)
-      .eq('contribution_id', contributionId)
-      .maybeSingle()
+    supabase.from('applause').select('user_id').eq('user_id', session.user.id).eq('contribution_id', contributionId).maybeSingle()
       .then(({ data }) => setOn(!!data));
   }, [session?.user.id, contributionId]);
 
   async function toggle() {
     if (!session) { setPrompt(true); return; }
     if (on) {
-      await supabase
-        .from('applause')
-        .delete()
-        .eq('user_id', session.user.id)
-        .eq('contribution_id', contributionId);
-      setOn(false);
-      setCount((c) => c - 1);
+      await supabase.from('applause').delete().eq('user_id', session.user.id).eq('contribution_id', contributionId);
+      setOn(false); setCount((c) => c - 1);
     } else {
-      await supabase
-        .from('applause')
-        .insert({ user_id: session.user.id, contribution_id: contributionId });
-      setOn(true);
-      setCount((c) => c + 1);
+      await supabase.from('applause').insert({ user_id: session.user.id, contribution_id: contributionId });
+      setOn(true); setCount((c) => c + 1);
     }
   }
 
@@ -48,10 +32,10 @@ export default function ApplaudButton({ contributionId }: { contributionId: stri
     <>
       <button
         onClick={toggle}
-        className={`text-xs px-2 py-0.5 rounded-full border transition ${
+        className={`font-mono text-[11px] uppercase tracking-wider px-2.5 py-1 rounded-pill border transition-colors duration-fast ${
           on
-            ? 'bg-heart-500 text-white border-heart-500'
-            : 'bg-white border-stone-300 hover:bg-stone-100'
+            ? 'bg-coral border-coral text-ink'
+            : 'bg-transparent border-muted text-muted hover:border-ink hover:text-ink'
         }`}
       >
         👏 {count}

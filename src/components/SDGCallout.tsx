@@ -1,5 +1,4 @@
 import { MELBOURNE_SDG_PRIORITY, MELBOURNE_N } from '@/lib/glow';
-import { sdgChipClass } from '@/lib/sdgColors';
 
 export default function SDGCallout({ sdg }: { sdg: string }) {
   const key = Object.keys(MELBOURNE_SDG_PRIORITY).find(
@@ -9,17 +8,15 @@ export default function SDGCallout({ sdg }: { sdg: string }) {
   if (pct === undefined) return null;
 
   return (
-    <div className="rounded-2xl bg-white border border-stone-100 shadow-card p-4">
-      <div className="flex items-start justify-between gap-2 mb-2">
-        <span className={`text-xs font-semibold rounded-full px-2.5 py-0.5 ${sdgChipClass(sdg)}`}>
-          {key}
-        </span>
-        <span className="text-2xl font-black text-stone-900 shrink-0">{pct}%</span>
-      </div>
-      <p className="text-sm text-stone-600 leading-snug">
-        of Melburnians rank this in their personal top 3 SDG priorities.
+    <div className="card p-4">
+      <div className="eyebrow mb-1">Melbourne priority</div>
+      <div className="font-display text-4xl text-coral leading-none">{pct}%</div>
+      <p className="text-sm text-ink-2 mt-1 leading-snug">
+        rank <em className="font-serif italic">{key}</em> in their top 3
       </p>
-      <p className="text-xs text-stone-400 mt-1.5">Glow / GMS · n={MELBOURNE_N.toLocaleString()}</p>
+      <p className="font-mono text-[10px] text-muted mt-2 uppercase tracking-wider">
+        Glow · GMS · n={MELBOURNE_N.toLocaleString()}
+      </p>
     </div>
   );
 }

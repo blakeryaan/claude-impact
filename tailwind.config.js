@@ -4,20 +4,37 @@ export default {
   theme: {
     extend: {
       colors: {
-        heart: {
-          50: '#fff1f1',
-          100: '#ffe1e1',
-          500: '#ef4444',
-          600: '#dc2626',
-          700: '#b91c1c',
+        paper: {
+          DEFAULT: '#F2EDE3',
+          2: '#E8E0D0',
         },
+        ink: {
+          DEFAULT: '#1C1A17',
+          2: '#2A2722',
+        },
+        muted: '#6B655A',
+        coral: '#E84E1B',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans:    ['"Space Grotesk"', 'system-ui', 'sans-serif'],
+        display: ['Anton', 'Impact', 'sans-serif'],
+        mono:    ['"JetBrains Mono"', 'monospace'],
+        serif:   ['"Instrument Serif"', 'Georgia', 'serif'],
       },
-      boxShadow: {
-        card: '0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06)',
-        'card-hover': '0 4px 12px 0 rgb(0 0 0 / 0.10), 0 2px 4px -2px rgb(0 0 0 / 0.08)',
+      borderRadius: {
+        sm:   '8px',
+        md:   '14px',
+        lg:   '20px',
+        pill: '100px',
+      },
+      transitionTimingFunction: {
+        std:  'cubic-bezier(0.4, 0.0, 0.2, 1)',
+        slow: 'cubic-bezier(0.2, 0.0, 0.0, 1)',
+      },
+      transitionDuration: {
+        fast: '160ms',
+        std:  '240ms',
+        slow: '600ms',
       },
     },
   },
