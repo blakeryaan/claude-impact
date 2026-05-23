@@ -49,8 +49,9 @@ Two separate frontend login pages (`/login` for customers, `/shop/login` for sho
 
 ## Documents
 
-- **[Design spec](./docs/superpowers/specs/2026-05-23-good-shit-design.md)** — schema, RLS sketch, page-by-page breakdown, MVP cut.
-- **[Project context](./00_PROJECT_CONTEXT.md)** — hackathon brief, data sources, pre-computed Glow numbers.
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** — schema, RLS sketch, page-by-page breakdown, MVP cut.
+- **[IMPLEMENTATION.md](./IMPLEMENTATION.md)** — step-by-step build plan.
+- **[00_PROJECT_CONTEXT.md](./00_PROJECT_CONTEXT.md)** — hackathon brief, data sources, pre-computed Glow numbers.
 - **[CLAUDE.md](./CLAUDE.md)** — guidance for future Claude Code sessions in this repo.
 
 ## Status

@@ -1,8 +1,9 @@
-# Good Sh*t — Design Spec
+# Architecture — Good Sh*t
 
 **Date:** 23 May 2026
 **Context:** Claude Impact Lab hackathon, Melbourne (one-day build).
-**Sources:** [README.md](../../../README.md), [00_PROJECT_CONTEXT.md](../../../00_PROJECT_CONTEXT.md).
+**Sources:** [README.md](./README.md), [00_PROJECT_CONTEXT.md](./00_PROJECT_CONTEXT.md).
+**Companion:** [IMPLEMENTATION.md](./IMPLEMENTATION.md) for the build plan.
 
 ## 1. Purpose
 
@@ -145,7 +146,7 @@ Lat/lngs spread across the City of Melbourne LGA.
 
 The Glow SDG awareness dataset is the evidence base for the pitch. Two surfaces use it:
 
-1. **Profile page sidebar callout** — for each SDG in `sdg_focus`, show the Melbourne priority %  from [00_PROJECT_CONTEXT.md §Melbourne SDG Priority Rankings](../../../00_PROJECT_CONTEXT.md#L145-L165). Example: "29.8% of Melburnians rank Good Health in their top 3 SDG priorities (Glow, n=2,492)."
+1. **Profile page sidebar callout** — for each SDG in `sdg_focus`, show the Melbourne priority %  from [00_PROJECT_CONTEXT.md §Melbourne SDG Priority Rankings](./00_PROJECT_CONTEXT.md#L145-L165). Example: "29.8% of Melburnians rank Good Health in their top 3 SDG priorities (Glow, n=2,492)."
 2. **"Why this exists" page (optional)** — a one-page summary citing the headline numbers: 29.1% Melbourne SDG awareness, 18.4% have switched brand for social/env reasons in the last 3 months.
 
 These numbers come from the committed CSV — no live computation needed.
@@ -186,7 +187,7 @@ The full design above is ~2-3 engineer-days. For the one-day hackathon, build in
 
 ## 12. Judging criteria mapping
 
-From [00_PROJECT_CONTEXT.md §What Judges Are Looking For](../../../00_PROJECT_CONTEXT.md#L21-L27):
+From [00_PROJECT_CONTEXT.md §What Judges Are Looking For](./00_PROJECT_CONTEXT.md#L21-L27):
 
 | Criterion | How the design serves it |
 |---|---|

@@ -14,7 +14,7 @@ Important constraints baked into the brief:
 
 ## Tech stack
 
-Decided in [docs/superpowers/specs/2026-05-23-good-shit-design.md](docs/superpowers/specs/2026-05-23-good-shit-design.md):
+Decided in [ARCHITECTURE.md](ARCHITECTURE.md):
 
 - **Frontend:** React + Vite + TypeScript + Tailwind + React Router. Responsive web only (no native build).
 - **Backend:** Supabase (Postgres + Auth + Storage + Row Level Security). No custom server code.
@@ -23,7 +23,7 @@ Decided in [docs/superpowers/specs/2026-05-23-good-shit-design.md](docs/superpow
 
 Three roles enforced by RLS, not application code: `customer`, `shop`, `admin`. Two separate frontend login pages (`/login` and `/shop/login`) share the same Supabase Auth.
 
-`TECH_STACK.md` is a leftover placeholder — the design spec is the source of truth.
+The design spec (`ARCHITECTURE.md`) is the source of truth; `IMPLEMENTATION.md` (sibling at root) is the build plan.
 
 ## Data assets
 
