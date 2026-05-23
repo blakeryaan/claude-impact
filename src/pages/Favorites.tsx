@@ -15,16 +15,25 @@ export default function FavoritesPage() {
       const { data } = await supabase
         .from('favorites')
         .select(
-          'business_id, businesses(*, business_heart_points!inner(heart_points, contribution_count))',
+          'business_id, businesses(*)',
         )
         .eq('user_id', session.user.id);
       if (!data) return;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const bizIds = (data as any[]).map((r) => r.businesses?.id).filter(Boolean);
+      const { data: pts } = bizIds.length
+        ? await supabase.from('business_heart_points').select('*').in('business_id', bizIds)
+        : { data: [] };
+      const ptsMap = Object.fromEntries(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (pts ?? []).map((r: any) => [r.business_id, r]),
+      );
       setRows(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (data as any[]).map((r) => ({
+        (data as any[]).filter((r) => r.businesses).map((r) => ({
           ...r.businesses,
-          heart_points: r.businesses.business_heart_points.heart_points,
-          contribution_count: r.businesses.business_heart_points.contribution_count,
+          heart_points: ptsMap[r.businesses.id]?.heart_points ?? 0,
+          contribution_count: ptsMap[r.businesses.id]?.contribution_count ?? 0,
         })),
       );
     })();

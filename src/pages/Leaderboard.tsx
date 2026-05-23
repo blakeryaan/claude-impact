@@ -11,14 +11,19 @@ export default function LeaderboardPage() {
     (async () => {
       const { data } = await supabase
         .from('businesses')
-        .select('*, business_heart_points!inner(heart_points, contribution_count)')
+        .select('*')
         .eq('approved', true);
+      const { data: pts } = await supabase.from('business_heart_points').select('*');
       if (!data) return;
+      const ptsMap = Object.fromEntries(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (pts ?? []).map((r: any) => [r.business_id, r]),
+      );
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const rows: BusinessWithPoints[] = (data as any[]).map((r) => ({
         ...r,
-        heart_points: r.business_heart_points.heart_points,
-        contribution_count: r.business_heart_points.contribution_count,
+        heart_points: ptsMap[r.id]?.heart_points ?? 0,
+        contribution_count: ptsMap[r.id]?.contribution_count ?? 0,
       }));
       rows.sort((a, b) => b.heart_points - a.heart_points);
       setTop(rows.slice(0, 10));

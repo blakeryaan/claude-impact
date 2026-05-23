@@ -36,15 +36,20 @@ export default function MapPage() {
     (async () => {
       const { data } = await supabase
         .from('businesses')
-        .select('*, business_heart_points!inner(heart_points, contribution_count)')
+        .select('*')
         .eq('approved', true);
+      const { data: pts } = await supabase.from('business_heart_points').select('*');
       if (!data) return;
+      const ptsMap = Object.fromEntries(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (pts ?? []).map((r: any) => [r.business_id, r]),
+      );
       setBusinesses(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (data as any[]).map((row) => ({
           ...row,
-          heart_points: row.business_heart_points.heart_points,
-          contribution_count: row.business_heart_points.contribution_count,
+          heart_points: ptsMap[row.id]?.heart_points ?? 0,
+          contribution_count: ptsMap[row.id]?.contribution_count ?? 0,
         })),
       );
     })();
