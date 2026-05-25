@@ -1,0 +1,268 @@
+<!--
+  DGS SHORTLIST ARTIFACT
+  ----------------------
+  Claude: inject your results JSON before rendering.
+  Replace INJECT_SUBURB and INJECT_RESULTS_JSON with real values.
+
+  Example injection:
+    window.__DGS_SUBURB__ = "Fitzroy";
+    window.__DGS_RESULTS__ = [ { ...business objects... } ];
+-->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=DM+Sans:wght@400;500&display=swap');
+:root{
+  --b:#1C1C1A; --c:#F2EDE4; --o:#E04E1E; --g:#2E2E2C; --m:#8A8880;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--b);color:var(--c);font-family:'DM Sans',sans-serif;min-height:100vh;}
+.wrap{max-width:480px;margin:0 auto;padding:20px 16px 60px;position:relative;}
+
+/* grain */
+.wrap::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+  opacity:0.45;}
+.inner{position:relative;z-index:1;}
+
+/* header */
+.logo{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.9rem;letter-spacing:-0.3px;line-height:1;color:var(--c);}
+.logo span{color:var(--o);}
+.sub{font-size:0.68rem;color:var(--m);letter-spacing:0.1em;text-transform:uppercase;margin-top:3px;margin-bottom:20px;}
+
+/* tabs */
+.tabs{display:flex;border-bottom:1px solid var(--g);margin-bottom:20px;}
+.tab{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;padding:10px 16px 9px;cursor:pointer;color:var(--m);border-bottom:2px solid transparent;margin-bottom:-1px;background:none;border-top:none;border-left:none;border-right:none;transition:all 0.15s;}
+.tab:hover{color:var(--c);}
+.tab.active{color:var(--c);border-bottom-color:var(--o);}
+.badge{display:inline-block;background:var(--o);color:var(--c);font-size:0.6rem;font-weight:700;padding:1px 5px;margin-left:5px;vertical-align:middle;border-radius:2px;}
+
+/* cards */
+.cards{display:flex;flex-direction:column;gap:14px;}
+.card{border:1px solid var(--g);background:var(--b);padding:18px;transition:border-color 0.15s;}
+.card:hover{border-color:var(--m);}
+.card-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;}
+.emoji{font-size:1.65rem;line-height:1;flex-shrink:0;margin-top:2px;}
+.card-meta{flex:1;min-width:0;}
+.ctag{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--o);border:1px solid var(--o);padding:2px 6px;margin-bottom:3px;}
+.stag{font-size:0.65rem;color:var(--m);margin-left:6px;letter-spacing:0.04em;}
+.cname{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.2rem;color:var(--c);line-height:1.05;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.oneliner{font-size:0.83rem;color:rgba(242,237,228,0.72);line-height:1.5;margin-bottom:9px;}
+.why{font-size:0.78rem;color:var(--o);font-weight:500;margin-bottom:11px;line-height:1.4;}
+.warn{font-size:0.72rem;color:#d4903a;margin-bottom:8px;}
+.engage{display:flex;flex-direction:column;gap:3px;margin-bottom:13px;}
+.etag{font-size:0.73rem;color:var(--c);background:var(--g);padding:4px 8px;display:inline-block;width:fit-content;}
+.footer{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--g);padding-top:10px;gap:8px;}
+.link{font-size:0.7rem;color:var(--m);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.link:hover{color:var(--c);}
+
+/* buttons */
+.savebtn{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;background:var(--o);color:var(--c);border:none;padding:6px 11px;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:opacity 0.15s;}
+.savebtn:hover{opacity:0.85;}
+.savebtn.saved{background:var(--g);color:var(--m);cursor:default;}
+.rmbtn{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;background:transparent;color:var(--m);border:1px solid var(--g);padding:5px 10px;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all 0.15s;}
+.rmbtn:hover{border-color:var(--o);color:var(--o);}
+
+.sdate{font-size:0.63rem;color:var(--m);margin-top:5px;text-align:right;letter-spacing:0.03em;}
+
+/* empty / filter */
+.empty{border:1px solid var(--g);padding:40px 20px;text-align:center;}
+.empty h3{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.25rem;text-transform:uppercase;color:var(--c);margin-bottom:6px;}
+.empty p{font-size:0.82rem;color:var(--m);}
+
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.fbtn{background:transparent;border:1px solid var(--g);color:var(--m);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;padding:4px 10px;cursor:pointer;transition:all 0.15s;}
+.fbtn:hover{border-color:var(--c);color:var(--c);}
+.fbtn.active{background:var(--o);border-color:var(--o);color:var(--c);}
+.count{font-size:0.68rem;color:var(--m);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;}
+.count strong{color:var(--c);}
+
+/* toast */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--o);color:var(--c);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:0.06em;text-transform:uppercase;padding:9px 18px;z-index:100;opacity:0;transition:opacity 0.2s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;}
+</style>
+
+<div class="wrap">
+  <div class="inner">
+    <div class="logo">DO GOOD SH<span>*</span>T</div>
+    <div class="sub" id="sub-heading">YOUR PATCH</div>
+
+    <div class="tabs">
+      <button class="tab active" id="tab-results" onclick="switchTab('results')">
+        Results <span class="badge" id="results-badge">0</span>
+      </button>
+      <button class="tab" id="tab-list" onclick="switchTab('list')">
+        My List <span class="badge" id="list-badge">0</span>
+      </button>
+    </div>
+
+    <div id="pane-results"></div>
+    <div id="pane-list" style="display:none"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── INJECTED BY CLAUDE ──────────────────────────────────────────────
+window.__DGS_SUBURB__ = "INJECT_SUBURB";
+window.__DGS_RESULTS__ = INJECT_RESULTS_JSON;
+// ────────────────────────────────────────────────────────────────────
+
+const STORAGE_KEY = 'dgs-shortlist';
+let activeTab = 'results';
+let listFilter = 'all';
+let savedIds = new Set();
+
+function fmtDate(s){
+  try{return new Date(s).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'})}
+  catch{return ''}
+}
+
+async function loadSaved(){
+  try{
+    const r = await window.storage.get(STORAGE_KEY);
+    return r && r.value ? JSON.parse(r.value) : [];
+  } catch { return []; }
+}
+
+async function writeSaved(entries){
+  try{ await window.storage.set(STORAGE_KEY, JSON.stringify(entries)); }
+  catch(e){ console.error('Storage write failed', e); }
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+function cardHTML(e, mode){
+  const warnHTML = e.confidence === 'low'
+    ? `<div class="warn">⚠️ Worth calling ahead to confirm they're still running.</div>` : '';
+  const engageHTML = (e.howToEngage||[]).map(x=>`<span class="etag">${x}</span>`).join('');
+  const websiteHTML = e.website
+    ? `<a class="link" href="https://${e.website.replace(/^https?:\/\//,'')}" target="_blank">${e.website.replace(/^https?:\/\//,'')}</a>`
+    : `<span></span>`;
+
+  const actionBtn = mode === 'results'
+    ? `<button class="savebtn${savedIds.has(e.id)?' saved':''}" id="savebtn-${e.id}" onclick="saveEntry('${e.id}')">${savedIds.has(e.id)?'✓ SAVED':'＋ SAVE'}</button>`
+    : `<button class="rmbtn" onclick="removeEntry('${e.id}')">Remove</button>`;
+
+  const dateHTML = mode === 'list' && e.savedAt
+    ? `<div class="sdate">Saved ${fmtDate(e.savedAt)}</div>` : '';
+
+  return `
+    <div class="card" id="card-${e.id}">
+      <div class="card-top">
+        <div class="emoji">${e.emoji}</div>
+        <div class="card-meta">
+          <div><span class="ctag">${e.categoryLabel}</span><span class="stag">${e.suburb}</span></div>
+          <div class="cname" title="${e.name}">${e.name}</div>
+        </div>
+      </div>
+      <div class="oneliner">${e.oneLiner}</div>
+      <div class="why">↳ ${e.whyItMatters}</div>
+      ${warnHTML}
+      <div class="engage">${engageHTML}</div>
+      <div class="footer">${websiteHTML}${actionBtn}</div>
+      ${dateHTML}
+    </div>`;
+}
+
+async function renderResults(){
+  const results = window.__DGS_RESULTS__ || [];
+  document.getElementById('results-badge').textContent = results.length;
+  const pane = document.getElementById('pane-results');
+  if(!results.length){
+    pane.innerHTML = '<div class="empty"><h3>No results yet.</h3><p>Run a search to find good businesses near you.</p></div>';
+    return;
+  }
+  pane.innerHTML = `<div class="cards">${results.map(e=>cardHTML(e,'results')).join('')}</div>`;
+}
+
+async function renderList(){
+  const saved = await loadSaved();
+  const categories = [...new Set(saved.map(e=>e.categoryLabel))];
+  const filtered = listFilter === 'all' ? saved : saved.filter(e=>e.categoryLabel===listFilter);
+
+  document.getElementById('list-badge').textContent = saved.length;
+
+  const pane = document.getElementById('pane-list');
+  if(!saved.length){
+    pane.innerHTML = '<div class="empty"><h3>Nothing saved yet.</h3><p>Go find something worth supporting.</p></div>';
+    return;
+  }
+
+  const filterBtns = ['all',...categories].map(f=>
+    `<button class="fbtn${listFilter===f?' active':''}" onclick="setListFilter('${f.replace(/'/g,"\\'")}')">
+      ${f==='all'?'ALL':f}
+    </button>`
+  ).join('');
+
+  pane.innerHTML = `
+    <div class="filters">${filterBtns}</div>
+    <div class="count"><strong>${filtered.length}</strong> ${filtered.length===1?'place':'places'} saved</div>
+    <div class="cards">${filtered.length
+      ? filtered.map(e=>cardHTML(e,'list')).join('')
+      : '<div class="empty"><h3>None in this category.</h3><p>Try a different filter.</p></div>'
+    }</div>`;
+}
+
+async function saveEntry(id){
+  const results = window.__DGS_RESULTS__ || [];
+  const entry = results.find(e=>e.id===id);
+  if(!entry) return;
+
+  const saved = await loadSaved();
+  if(saved.find(e=>e.id===id)){
+    showToast('Already in your list.');
+    return;
+  }
+
+  const newEntry = {...entry, savedAt: new Date().toISOString()};
+  await writeSaved([...saved, newEntry]);
+  savedIds.add(id);
+
+  const btn = document.getElementById(`savebtn-${id}`);
+  if(btn){ btn.textContent='✓ SAVED'; btn.classList.add('saved'); }
+
+  document.getElementById('list-badge').textContent = saved.length + 1;
+  showToast(`${entry.name} saved to your list.`);
+}
+
+async function removeEntry(id){
+  const saved = await loadSaved();
+  const updated = saved.filter(e=>e.id!==id);
+  await writeSaved(updated);
+  savedIds.delete(id);
+  renderList();
+  showToast('Removed from your list.');
+}
+
+function setListFilter(f){
+  listFilter = f;
+  renderList();
+}
+
+function switchTab(tab){
+  activeTab = tab;
+  document.getElementById('pane-results').style.display = tab==='results' ? '' : 'none';
+  document.getElementById('pane-list').style.display   = tab==='list'    ? '' : 'none';
+  document.getElementById('tab-results').classList.toggle('active', tab==='results');
+  document.getElementById('tab-list').classList.toggle('active', tab==='list');
+  if(tab==='list') renderList();
+}
+
+async function init(){
+  const suburb = window.__DGS_SUBURB__ || 'YOUR PATCH';
+  document.getElementById('sub-heading').textContent = suburb.toUpperCase() + ' · GOOD BUSINESSES WORTH SUPPORTING';
+
+  // pre-populate savedIds so save buttons reflect existing state
+  const saved = await loadSaved();
+  savedIds = new Set(saved.map(e=>e.id));
+
+  document.getElementById('list-badge').textContent = saved.length;
+  renderResults();
+}
+
+init();
+</script>
