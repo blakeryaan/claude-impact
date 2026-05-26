@@ -1,0 +1,446 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+:root {
+  --paper: #F2EDE3;
+  --paper-2: #E8E0D0;
+  --ink: #1C1A17;
+  --muted: #5A544A;
+  --coral: #C93E0F;
+  --coral-bg: #FDEEE8;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.phone {
+  width: 390px; background: var(--paper);
+  border-radius: 40px; overflow: hidden;
+  font-family: 'Space Grotesk', sans-serif; color: var(--ink);
+  position: relative; min-height: 700px;
+  display: flex; flex-direction: column;
+}
+.status-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 24px 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: var(--muted); letter-spacing: 0.1em;
+  flex-shrink: 0;
+}
+.top-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 4px 20px 12px; flex-shrink: 0;
+  border-bottom: 1px solid rgba(28,26,23,0.1);
+}
+.wordmark { display: flex; align-items: center; gap: 8px; }
+.badge-logo {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--ink); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.badge-logo-text { font-family: 'Anton', sans-serif; font-size: 6px; color: #F2EDE3; text-align: center; line-height: 1.2; letter-spacing: 0.04em; }
+.badge-logo-text span { color: #E84E1B; }
+.wordmark-text { font-family: 'Anton', sans-serif; font-size: 16px; letter-spacing: -0.01em; color: var(--ink); line-height: 1; }
+.wordmark-text span { color: var(--coral); }
+.signin-btn {
+  background: var(--coral); color: #fff;
+  border: none; border-radius: 100px; padding: 7px 14px;
+  font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer;
+  transition: background 160ms;
+}
+.signin-btn:hover { background: #a83209; }
+.scroll-area { flex: 1; overflow-y: auto; padding-bottom: 16px; }
+.screen { display: none; }
+.screen.active { display: block; }
+.eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--coral); padding: 16px 20px 4px; }
+.screen-title { font-family: 'Anton', sans-serif; font-size: 40px; color: var(--ink); letter-spacing: -0.01em; line-height: 0.92; padding: 0 20px; margin-bottom: 4px; }
+.screen-narrative { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 13px; color: var(--muted); padding: 0 20px; margin-bottom: 16px; line-height: 1.5; }
+
+/* HEROES */
+.heroes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 16px; }
+.hero-card {
+  background: #fff; border: 1.5px solid rgba(28,26,23,0.18);
+  border-radius: 14px; overflow: hidden; cursor: pointer;
+  transition: transform 160ms, border-color 160ms;
+}
+.hero-card:hover { transform: translateY(-2px); border-color: var(--coral); }
+.hero-img { width: 100%; height: 80px; background: var(--paper-2); display: flex; align-items: center; justify-content: center; font-family: 'Anton', sans-serif; font-size: 28px; color: var(--muted); }
+.hero-body { padding: 10px; }
+.hero-award { font-family: 'JetBrains Mono', monospace; font-size: 7.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--coral); margin-bottom: 3px; }
+.hero-name { font-family: 'Anton', sans-serif; font-size: 14px; color: var(--ink); line-height: 1; letter-spacing: -0.01em; margin-bottom: 4px; }
+.hero-desc { font-family: 'Space Grotesk', sans-serif; font-size: 10px; color: var(--muted); line-height: 1.4; margin-bottom: 6px; }
+.sdg-tags { display: flex; flex-wrap: wrap; gap: 3px; }
+.sdg-tag { font-family: 'JetBrains Mono', monospace; font-size: 7px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink); background: var(--paper-2); border-radius: 100px; padding: 2px 6px; }
+.hero-loops { display: flex; align-items: center; gap: 4px; margin-top: 7px; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--coral); letter-spacing: 0.08em; font-weight: 700; }
+
+/* PROFILE OVERLAY */
+.profile-overlay { display: none; position: absolute; inset: 0; background: var(--paper); z-index: 20; overflow-y: auto; padding-bottom: 40px; }
+.profile-overlay.open { display: block; }
+.profile-back { display: flex; align-items: center; gap: 8px; padding: 14px 20px 10px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--coral); cursor: pointer; border-bottom: 1px solid rgba(28,26,23,0.1); }
+.profile-hero-img { width: 100%; height: 160px; background: var(--paper-2); display: flex; align-items: center; justify-content: center; font-family: 'Anton', sans-serif; font-size: 56px; color: var(--muted); }
+.profile-header { padding: 16px 20px; border-bottom: 1px solid rgba(28,26,23,0.1); }
+.profile-award { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--coral); margin-bottom: 4px; }
+.profile-name { font-family: 'Anton', sans-serif; font-size: 32px; color: var(--ink); letter-spacing: -0.01em; line-height: 0.92; margin-bottom: 8px; }
+.profile-loops-big { font-family: 'Anton', sans-serif; font-size: 52px; color: var(--coral); line-height: 0.9; }
+.profile-loops-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); margin-bottom: 12px; }
+.profile-sdgs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.profile-sdg { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); background: var(--paper-2); border-radius: 100px; padding: 4px 10px; }
+.profile-actions { display: flex; gap: 8px; }
+.profile-btn { flex: 1; background: transparent; border: 1.5px solid var(--ink); border-radius: 100px; padding: 9px 8px; font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600; color: var(--ink); cursor: pointer; text-align: center; transition: background 160ms, color 160ms; }
+.profile-btn:hover { background: var(--ink); color: #F2EDE3; }
+.profile-btn-nominate {
+  flex: 1.5;
+  background: var(--coral); color: #fff;
+  border: 2px solid var(--coral);
+  border-radius: 100px; padding: 9px 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px; font-weight: 700; cursor: pointer; text-align: center;
+  transition: background 160ms;
+}
+.profile-btn-nominate:hover { background: #a83209; border-color: #a83209; }
+.profile-section { padding: 14px 20px; border-bottom: 1px solid rgba(28,26,23,0.1); }
+.profile-section-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--coral); margin-bottom: 8px; }
+.profile-about { font-family: 'Space Grotesk', sans-serif; font-size: 14px; color: var(--ink); line-height: 1.6; }
+.profile-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.profile-stat { background: var(--paper-2); border-radius: 12px; padding: 12px; }
+.profile-stat-num { font-family: 'Anton', sans-serif; font-size: 26px; color: var(--ink); line-height: 1; }
+.profile-stat-label { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+.contribution-item { padding: 12px; background: var(--paper-2); border-radius: 12px; margin-bottom: 8px; }
+.contribution-date { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.contribution-text { font-family: 'Space Grotesk', sans-serif; font-size: 13px; color: var(--ink); line-height: 1.4; }
+.contribution-loops { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--coral); margin-top: 4px; letter-spacing: 0.08em; font-weight: 700; }
+
+/* MAP */
+.map-filters { display: flex; gap: 8px; padding: 0 20px 14px; overflow-x: auto; scrollbar-width: none; }
+.map-filters::-webkit-scrollbar { display: none; }
+.filter-chip { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); background: var(--paper-2); border-radius: 100px; padding: 5px 12px; white-space: nowrap; cursor: pointer; border: 1.5px solid transparent; transition: all 160ms; flex-shrink: 0; }
+.filter-chip.active { border-color: var(--coral); color: var(--coral); background: var(--coral-bg); }
+.map-container { margin: 0 16px; border-radius: 16px; overflow: hidden; height: 240px; position: relative; border: 1.5px solid rgba(28,26,23,0.15); }
+.map-count { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); background: var(--ink); color: #F2EDE3; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; padding: 5px 12px; border-radius: 100px; white-space: nowrap; }
+.map-businesses { padding: 14px 16px 0; }
+.map-biz-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #fff; border: 1.5px solid rgba(28,26,23,0.15); border-radius: 12px; margin-bottom: 8px; cursor: pointer; transition: border-color 160ms, transform 160ms; }
+.map-biz-row:hover { border-color: var(--coral); transform: translateY(-1px); }
+.map-biz-initial { width: 36px; height: 36px; border-radius: 50%; background: var(--paper-2); border: 1.5px solid var(--ink); display: flex; align-items: center; justify-content: center; font-family: 'Anton', sans-serif; font-size: 14px; color: var(--ink); flex-shrink: 0; }
+.map-biz-info { flex: 1; min-width: 0; }
+.map-biz-name { font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; color: var(--ink); }
+.map-biz-meta { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 1px; }
+.map-biz-loops { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--coral); letter-spacing: 0.06em; flex-shrink: 0; font-weight: 700; }
+
+/* LEADERBOARD */
+.loop-statement { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 13px; color: var(--ink); border-left: 2px solid var(--coral); margin: 0 20px 16px; padding-left: 12px; line-height: 1.5; }
+.leaderboard-list { padding: 0 16px; }
+.lb-row { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid rgba(28,26,23,0.1); cursor: pointer; transition: opacity 160ms; }
+.lb-row:hover { opacity: 0.75; }
+.lb-rank { font-family: 'Anton', sans-serif; font-size: 26px; color: var(--muted); width: 40px; line-height: 1; flex-shrink: 0; }
+.lb-rank.gold { color: var(--coral); }
+.lb-initial { width: 36px; height: 36px; border-radius: 50%; background: var(--paper-2); border: 1.5px solid var(--ink); display: flex; align-items: center; justify-content: center; font-family: 'Anton', sans-serif; font-size: 14px; color: var(--ink); flex-shrink: 0; }
+.lb-initial.gold { background: var(--coral); color: #fff; border-color: var(--coral); }
+.lb-info { flex: 1; min-width: 0; }
+.lb-name { font-family: 'Anton', sans-serif; font-size: 14px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lb-contributions { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 1px; }
+.lb-score { text-align: right; flex-shrink: 0; }
+.lb-num { font-family: 'Anton', sans-serif; font-size: 20px; color: var(--ink); line-height: 1; }
+.lb-num.gold { color: var(--coral); }
+.lb-unit { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.lb-unit.gold { color: var(--coral); }
+.loop-tagline { margin: 16px 16px 0; padding: 14px; background: var(--ink); border-radius: 12px; font-family: 'Instrument Serif', serif; font-style: italic; font-size: 13px; color: #F2EDE3; line-height: 1.5; }
+.loop-tagline span { color: #E84E1B; }
+
+/* WHY */
+.why-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 16px; margin-bottom: 14px; }
+.why-stat { background: #fff; border: 1.5px solid rgba(28,26,23,0.15); border-radius: 14px; padding: 14px; }
+.why-stat-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--coral); margin-bottom: 4px; }
+.why-stat-num { font-family: 'Anton', sans-serif; font-size: 34px; color: var(--ink); line-height: 0.9; }
+.why-stat-desc { font-family: 'Space Grotesk', sans-serif; font-size: 11px; color: var(--ink); margin-top: 5px; line-height: 1.4; }
+.why-stat-sub { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 11px; color: var(--muted); margin-top: 3px; }
+.why-priorities { margin: 0 16px; background: var(--paper-2); border-radius: 14px; padding: 14px; margin-bottom: 14px; }
+.why-priorities-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--coral); margin-bottom: 4px; }
+.why-priorities-title { font-family: 'Anton', sans-serif; font-size: 17px; color: var(--ink); letter-spacing: -0.01em; line-height: 1; margin-bottom: 2px; }
+.why-priorities-sub { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
+.priority-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid rgba(28,26,23,0.1); }
+.priority-row:last-child { border-bottom: none; }
+.priority-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--coral); letter-spacing: 0.06em; width: 20px; flex-shrink: 0; }
+.priority-name { font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--ink); flex: 1; }
+.priority-pct { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.06em; flex-shrink: 0; }
+.why-closing { margin: 0 16px; background: var(--ink); border-radius: 14px; padding: 16px; }
+.why-closing-text { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 14px; color: #F2EDE3; line-height: 1.6; margin-bottom: 12px; }
+.why-closing-text span { color: #E84E1B; }
+.why-cta { background: var(--coral); color: #fff; border: none; border-radius: 100px; padding: 12px 20px; font-family: 'Anton', sans-serif; font-size: 14px; letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; width: 100%; transition: background 160ms; }
+.why-cta:hover { background: #a83209; }
+
+/* NAV */
+.nav { flex-shrink: 0; background: var(--ink); border-top: none; display: flex; padding: 10px 0 18px; z-index: 10; }
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; transition: opacity 160ms; }
+.nav-item:hover { opacity: 0.7; }
+.nav-icon { font-size: 20px; color: rgba(242,237,227,0.45); transition: color 160ms; }
+.nav-icon.active { color: #E84E1B; }
+.nav-label { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(242,237,227,0.45); transition: color 160ms; }
+.nav-label.active { color: #E84E1B; }
+</style>
+
+<h2 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);">Just Do Good Sh*t — four screen platform: Heroes, Map, Leaderboard, Why</h2>
+
+<div style="background:#111;padding:16px;display:flex;justify-content:center;border-radius:8px;">
+<div class="phone">
+  <div class="status-bar"><span>9:41</span><span>MELBOURNE CBD</span></div>
+  <div class="top-bar">
+    <div class="wordmark">
+      <div class="badge-logo"><div class="badge-logo-text">DO<br>GOOD<br>SH<span>*</span>T</div></div>
+      <div class="wordmark-text">JUST DO GOOD SH<span>*</span>T</div>
+    </div>
+    <button class="signin-btn">Get in the loop</button>
+  </div>
+
+  <div class="scroll-area">
+
+    <!-- HEROES -->
+    <div class="screen active" id="screen-heroes">
+      <p class="eyebrow">MELBOURNE'S FINEST</p>
+      <h1 class="screen-title">LOCAL<br>HEROES</h1>
+      <p class="screen-narrative">Businesses closing loops, every single day.</p>
+      <div class="heroes-grid">
+        <div class="hero-card" onclick="openProfile('streat')" role="button" tabindex="0" aria-label="View Streat profile">
+          <div class="hero-img">S</div>
+          <div class="hero-body">
+            <div class="hero-award">B-CORP</div>
+            <div class="hero-name">STREAT</div>
+            <div class="hero-desc">Hospitality training for disadvantaged young Melburnians</div>
+            <div class="sdg-tags"><span class="sdg-tag">No poverty</span><span class="sdg-tag">Decent work</span></div>
+            <div class="hero-loops">↺ 350 LOOPS</div>
+          </div>
+        </div>
+        <div class="hero-card" onclick="openProfile('lentil')" role="button" tabindex="0" aria-label="View Lentil As Anything profile">
+          <div class="hero-img">L</div>
+          <div class="hero-body">
+            <div class="hero-award">MULTICULTURAL AWARD</div>
+            <div class="hero-name">LENTIL AS ANYTHING</div>
+            <div class="hero-desc">Pay-as-you-feel restaurant for food security</div>
+            <div class="sdg-tags"><span class="sdg-tag">Zero hunger</span><span class="sdg-tag">Equality</span></div>
+            <div class="hero-loops">↺ 215 LOOPS</div>
+          </div>
+        </div>
+        <div class="hero-card" onclick="openProfile('social')" role="button" tabindex="0" aria-label="View The Social Studio profile">
+          <div class="hero-img">T</div>
+          <div class="hero-body">
+            <div class="hero-award">FASHION LAUREATE</div>
+            <div class="hero-name">THE SOCIAL STUDIO</div>
+            <div class="hero-desc">Fashion school employing people from refugee backgrounds</div>
+            <div class="sdg-tags"><span class="sdg-tag">Decent work</span><span class="sdg-tag">Equality</span></div>
+            <div class="hero-loops">↺ 115 LOOPS</div>
+          </div>
+        </div>
+        <div class="hero-card" onclick="openProfile('commonfolk')" role="button" tabindex="0" aria-label="View CommonFolk profile">
+          <div class="hero-img">C</div>
+          <div class="hero-body">
+            <div class="hero-award">FOUNDING PARTNER</div>
+            <div class="hero-name">COMMONFOLK</div>
+            <div class="hero-desc">20¢ per coffee going to the fund since day one</div>
+            <div class="sdg-tags"><span class="sdg-tag">No poverty</span><span class="sdg-tag">Zero hunger</span></div>
+            <div class="hero-loops">↺ 280 LOOPS</div>
+          </div>
+        </div>
+      </div>
+      <div style="height:16px;"></div>
+    </div>
+
+    <!-- MAP -->
+    <div class="screen" id="screen-map">
+      <p class="eyebrow">43 BUSINESSES IN THE LOOP</p>
+      <h1 class="screen-title">THE<br>MAP</h1>
+      <div class="map-filters">
+        <div class="filter-chip active">All</div>
+        <div class="filter-chip">Food rescue</div>
+        <div class="filter-chip">Training</div>
+        <div class="filter-chip">Fund</div>
+        <div class="filter-chip">Open now</div>
+      </div>
+      <div class="map-container">
+        <svg width="100%" height="240" viewBox="0 0 358 240" xmlns="http://www.w3.org/2000/svg">
+          <rect width="358" height="240" fill="#E8E4DC"/>
+          <line x1="0" y1="40" x2="358" y2="40" stroke="#CCC6B8" stroke-width="0.5"/>
+          <line x1="0" y1="80" x2="358" y2="80" stroke="#CCC6B8" stroke-width="0.5"/>
+          <line x1="0" y1="120" x2="358" y2="120" stroke="#CCC6B8" stroke-width="0.5"/>
+          <line x1="0" y1="160" x2="358" y2="160" stroke="#CCC6B8" stroke-width="0.5"/>
+          <line x1="0" y1="200" x2="358" y2="200" stroke="#CCC6B8" stroke-width="0.5"/>
+          <line x1="60" y1="0" x2="60" y2="240" stroke="#CCC6B8" stroke-width="0.5"/>
+          <line x1="120" y1="0" x2="120" y2="240" stroke="#CCC6B8" stroke-width="0.5"/>
+          <line x1="180" y1="0" x2="180" y2="240" stroke="#CCC6B8" stroke-width="0.5"/>
+          <line x1="240" y1="0" x2="240" y2="240" stroke="#CCC6B8" stroke-width="0.5"/>
+          <line x1="300" y1="0" x2="300" y2="240" stroke="#CCC6B8" stroke-width="0.5"/>
+          <rect x="70" y="40" width="220" height="160" rx="4" fill="#DDD8CE" stroke="#C4BEAE" stroke-width="1"/>
+          <rect x="85" y="55" width="35" height="22" rx="2" fill="#C8C2B4"/>
+          <rect x="130" y="55" width="45" height="22" rx="2" fill="#C8C2B4"/>
+          <rect x="185" y="55" width="38" height="22" rx="2" fill="#C8C2B4"/>
+          <rect x="85" y="92" width="48" height="26" rx="2" fill="#C8C2B4"/>
+          <rect x="143" y="92" width="32" height="26" rx="2" fill="#C8C2B4"/>
+          <rect x="185" y="92" width="52" height="26" rx="2" fill="#C8C2B4"/>
+          <rect x="85" y="132" width="38" height="30" rx="2" fill="#C8C2B4"/>
+          <rect x="133" y="132" width="62" height="30" rx="2" fill="#C8C2B4"/>
+          <rect x="205" y="132" width="44" height="30" rx="2" fill="#C8C2B4"/>
+          <circle cx="108" cy="83" r="11" fill="#C93E0F" stroke="#1C1A17" stroke-width="1.5"/>
+          <text x="108" y="87" text-anchor="middle" font-family="Anton" font-size="10" fill="#F2EDE3">S</text>
+          <circle cx="162" cy="80" r="11" fill="#C93E0F" stroke="#1C1A17" stroke-width="1.5"/>
+          <text x="162" y="84" text-anchor="middle" font-family="Anton" font-size="10" fill="#F2EDE3">L</text>
+          <circle cx="144" cy="120" r="11" fill="#C93E0F" stroke="#1C1A17" stroke-width="1.5"/>
+          <text x="144" y="124" text-anchor="middle" font-family="Anton" font-size="10" fill="#F2EDE3">C</text>
+          <circle cx="218" cy="110" r="11" fill="#C93E0F" stroke="#1C1A17" stroke-width="1.5"/>
+          <text x="218" y="114" text-anchor="middle" font-family="Anton" font-size="10" fill="#F2EDE3">H</text>
+          <circle cx="188" cy="148" r="10" fill="#1C1A17" stroke="#1C1A17" stroke-width="1"/>
+          <text x="188" y="152" text-anchor="middle" font-family="Anton" font-size="9" fill="#F2EDE3">W</text>
+          <circle cx="116" cy="150" r="10" fill="#1C1A17" stroke="#1C1A17" stroke-width="1"/>
+          <text x="116" y="154" text-anchor="middle" font-family="Anton" font-size="9" fill="#F2EDE3">K</text>
+          <circle cx="238" cy="68" r="8" fill="#5A544A" stroke="#1C1A17" stroke-width="1"/>
+          <text x="238" y="72" text-anchor="middle" font-family="Anton" font-size="7" fill="#F2EDE3">A</text>
+          <circle cx="162" cy="155" r="8" fill="#5A544A" stroke="#1C1A17" stroke-width="1"/>
+          <text x="162" y="159" text-anchor="middle" font-family="Anton" font-size="7" fill="#F2EDE3">O</text>
+        </svg>
+        <div class="map-count">43 BUSINESSES · MELBOURNE CBD</div>
+      </div>
+      <div class="map-businesses">
+        <div class="map-biz-row"><div class="map-biz-initial">S</div><div class="map-biz-info"><div class="map-biz-name">Streat</div><div class="map-biz-meta">Fitzroy · Food rescue + training</div></div><div class="map-biz-loops">↺ 350</div></div>
+        <div class="map-biz-row"><div class="map-biz-initial">C</div><div class="map-biz-info"><div class="map-biz-name">CommonFolk</div><div class="map-biz-meta">CBD · 20¢ per coffee</div></div><div class="map-biz-loops">↺ 280</div></div>
+        <div class="map-biz-row"><div class="map-biz-initial">H</div><div class="map-biz-info"><div class="map-biz-name">Higher Ground</div><div class="map-biz-meta">CBD · Surplus food + programs</div></div><div class="map-biz-loops">↺ 244</div></div>
+      </div>
+      <div style="height:16px;"></div>
+    </div>
+
+    <!-- LEADERBOARD -->
+    <div class="screen" id="screen-board">
+      <p class="eyebrow">WHO'S RUNNING THE TIGHTEST LOOP</p>
+      <h1 class="screen-title">LEADER<br>BOARD</h1>
+      <div class="loop-statement">"CommonFolk is running the tightest loop in the CBD — 350 loops closed this month."</div>
+      <div class="leaderboard-list">
+        <div class="lb-row"><div class="lb-rank gold">01</div><div class="lb-initial gold">T</div><div class="lb-info"><div class="lb-name">The Big Issue (CBD)</div><div class="lb-contributions">2 contributions this month</div></div><div class="lb-score"><div class="lb-num gold">350</div><div class="lb-unit gold">↺ LOOPS</div></div></div>
+        <div class="lb-row"><div class="lb-rank">02</div><div class="lb-initial">C</div><div class="lb-info"><div class="lb-name">CommonFolk</div><div class="lb-contributions">3 contributions this month</div></div><div class="lb-score"><div class="lb-num">310</div><div class="lb-unit">↺ LOOPS</div></div></div>
+        <div class="lb-row"><div class="lb-rank">03</div><div class="lb-initial">S</div><div class="lb-info"><div class="lb-name">St Kilda St Kitchen</div><div class="lb-contributions">2 contributions this month</div></div><div class="lb-score"><div class="lb-num">280</div><div class="lb-unit">↺ LOOPS</div></div></div>
+        <div class="lb-row"><div class="lb-rank">04</div><div class="lb-initial">W</div><div class="lb-info"><div class="lb-name">Who Gives A Crap</div><div class="lb-contributions">3 contributions this month</div></div><div class="lb-score"><div class="lb-num">270</div><div class="lb-unit">↺ LOOPS</div></div></div>
+        <div class="lb-row"><div class="lb-rank">05</div><div class="lb-initial">S</div><div class="lb-info"><div class="lb-name">Streat</div><div class="lb-contributions">3 contributions this month</div></div><div class="lb-score"><div class="lb-num">244</div><div class="lb-unit">↺ LOOPS</div></div></div>
+        <div class="lb-row"><div class="lb-rank">06</div><div class="lb-initial">L</div><div class="lb-info"><div class="lb-name">Lentil As Anything</div><div class="lb-contributions">3 contributions this month</div></div><div class="lb-score"><div class="lb-num">215</div><div class="lb-unit">↺ LOOPS</div></div></div>
+        <div class="lb-row"><div class="lb-rank">07</div><div class="lb-initial">H</div><div class="lb-info"><div class="lb-name">Hector's Deli</div><div class="lb-contributions">2 contributions this month</div></div><div class="lb-score"><div class="lb-num">195</div><div class="lb-unit">↺ LOOPS</div></div></div>
+        <div class="lb-row"><div class="lb-rank">08</div><div class="lb-initial">K</div><div class="lb-info"><div class="lb-name">KeepCup</div><div class="lb-contributions">1 contribution this month</div></div><div class="lb-score"><div class="lb-num">120</div><div class="lb-unit">↺ LOOPS</div></div></div>
+      </div>
+      <div class="loop-tagline">You've closed <span>47 loops</span> this month. Keep going — the CBD is watching. ↺</div>
+      <div style="height:16px;"></div>
+    </div>
+
+    <!-- WHY -->
+    <div class="screen" id="screen-why">
+      <p class="eyebrow">WHY THIS MATTERS</p>
+      <h1 class="screen-title">THE<br>NUMBERS</h1>
+      <p class="screen-narrative">Melbourne already gives a sh*t. We're just making it count.</p>
+      <div class="why-stats">
+        <div class="why-stat"><div class="why-stat-eyebrow">SDG AWARENESS</div><div class="why-stat-num">29.1%</div><div class="why-stat-desc">of Melburnians</div><div class="why-stat-sub">vs 18.4% regional Victoria</div></div>
+        <div class="why-stat"><div class="why-stat-eyebrow">SWITCHED BRAND</div><div class="why-stat-num">18.4%</div><div class="why-stat-desc">in last 3 months</div><div class="why-stat-sub">for social or environmental reasons</div></div>
+      </div>
+      <div class="why-priorities">
+        <div class="why-priorities-eyebrow">COMMUNITY PRIORITIES</div>
+        <div class="why-priorities-title">WHAT MELBURNIANS CARE ABOUT MOST</div>
+        <div class="why-priorities-sub">% ranking each SDG in personal top 3 · N=2,492</div>
+        <div class="priority-row"><span class="priority-num">01</span><span class="priority-name">Good health</span><span class="priority-pct">29.8%</span></div>
+        <div class="priority-row"><span class="priority-num">02</span><span class="priority-name">No poverty</span><span class="priority-pct">29.8%</span></div>
+        <div class="priority-row"><span class="priority-num">03</span><span class="priority-name">Clean water and sanitation</span><span class="priority-pct">29.5%</span></div>
+        <div class="priority-row"><span class="priority-num">04</span><span class="priority-name">Zero hunger</span><span class="priority-pct">26.4%</span></div>
+        <div class="priority-row"><span class="priority-num">05</span><span class="priority-name">Climate action</span><span class="priority-pct">22.2%</span></div>
+        <div class="priority-row"><span class="priority-num">06</span><span class="priority-name">Affordable and clean energy</span><span class="priority-pct">22.1%</span></div>
+        <div class="priority-row"><span class="priority-num">07</span><span class="priority-name">Quality education</span><span class="priority-pct">18.1%</span></div>
+      </div>
+      <div class="why-closing">
+        <div class="why-closing-text">Some days it feels like the world's on fire. Turns out caring about your community, and the people in it, and <span>genuinely doing good sh*t</span>, is a pretty good place to start.</div>
+        <button class="why-cta" aria-label="Get in the loop — sign up">↺ GET IN THE LOOP</button>
+      </div>
+      <div style="height:16px;"></div>
+    </div>
+  </div>
+
+  <!-- PROFILE OVERLAY -->
+  <div class="profile-overlay" id="profile-overlay" role="dialog" aria-modal="true" aria-labelledby="profile-name">
+    <div class="profile-back" onclick="closeProfile()" role="button" tabindex="0" aria-label="Back to Heroes">← BACK TO HEROES</div>
+    <div class="profile-hero-img" id="profile-img" aria-hidden="true">S</div>
+    <div class="profile-header">
+      <div class="profile-award" id="profile-award">B-CORP</div>
+      <div class="profile-name" id="profile-name">STREAT</div>
+      <div class="profile-loops-big" id="profile-loops" aria-label="Loops closed">350</div>
+      <div class="profile-loops-label">↺ LOOPS CLOSED THIS MONTH</div>
+      <div class="profile-sdgs" id="profile-sdgs"></div>
+      <div class="profile-actions">
+        <button class="profile-btn" aria-label="Save this business">★ Save</button>
+        <button class="profile-btn" aria-label="Follow this business">↺ Follow</button>
+        <button class="profile-btn-nominate" aria-label="Nominate this business for a Community Hero Award">★ Nominate</button>
+      </div>
+    </div>
+    <div class="profile-section">
+      <div class="profile-section-label">ABOUT</div>
+      <div class="profile-about" id="profile-about"></div>
+    </div>
+    <div class="profile-section">
+      <div class="profile-section-label">THIS MONTH</div>
+      <div class="profile-stats">
+        <div class="profile-stat"><div class="profile-stat-num" id="profile-loops-stat">350</div><div class="profile-stat-label">Loops closed</div></div>
+        <div class="profile-stat"><div class="profile-stat-num" id="profile-contributions">3</div><div class="profile-stat-label">Contributions</div></div>
+      </div>
+    </div>
+    <div class="profile-section">
+      <div class="profile-section-label">CONTRIBUTION TRAIL</div>
+      <div id="profile-contribution-list"></div>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav class="nav" id="main-nav" aria-label="Main navigation">
+    <div class="nav-item" onclick="switchScreen('heroes')" role="button" tabindex="0" aria-label="Heroes">
+      <i class="ti ti-award nav-icon active" id="icon-heroes" aria-hidden="true"></i>
+      <span class="nav-label active" id="nav-heroes">HEROES</span>
+    </div>
+    <div class="nav-item" onclick="switchScreen('map')" role="button" tabindex="0" aria-label="Map">
+      <i class="ti ti-map-pin nav-icon" id="icon-map" aria-hidden="true"></i>
+      <span class="nav-label" id="nav-map">MAP</span>
+    </div>
+    <div class="nav-item" onclick="switchScreen('board')" role="button" tabindex="0" aria-label="Leaderboard">
+      <i class="ti ti-trophy nav-icon" id="icon-board" aria-hidden="true"></i>
+      <span class="nav-label" id="nav-board">BOARD</span>
+    </div>
+    <div class="nav-item" onclick="switchScreen('why')" role="button" tabindex="0" aria-label="Why this matters">
+      <i class="ti ti-heart nav-icon" id="icon-why" aria-hidden="true"></i>
+      <span class="nav-label" id="nav-why">WHY</span>
+    </div>
+  </nav>
+</div>
+</div>
+
+<script>
+const profiles = {
+  streat: { img:'S', award:'B-CORP', name:'STREAT', loops:'350', contributions:'3', sdgs:['No poverty','Decent work & economic growth'], about:'Hospitality social enterprise training disadvantaged young Melburnians in food and coffee skills — and placing them in real jobs.', trail:[{date:'18 APR 2026',text:'Trained 12 young people this month, 8 placed in employment',loops:'↺ 180 loops'},{date:'8 MAR 2026',text:'Redirected 400kg surplus food to community meals',loops:'↺ 120 loops'},{date:'2 MAR 2026',text:'Free barista certification for 6 new cohort members',loops:'↺ 50 loops'}]},
+  lentil: { img:'L', award:'MULTICULTURAL AWARD', name:'LENTIL AS ANYTHING', loops:'215', contributions:'3', sdgs:['Zero hunger','Reduced inequalities'], about:'Pay-as-you-feel restaurant supporting food security and refugee employment across Melbourne.', trail:[{date:'20 APR 2026',text:'Served 800 pay-as-you-feel meals this month',loops:'↺ 100 loops'},{date:'10 MAR 2026',text:'Employed 3 new staff from refugee backgrounds',loops:'↺ 75 loops'},{date:'1 MAR 2026',text:'Hosted free community cooking workshop',loops:'↺ 40 loops'}]},
+  social: { img:'T', award:'AUSTRALIAN FASHION LAUREATE', name:'THE SOCIAL STUDIO', loops:'115', contributions:'2', sdgs:['Decent work & economic growth','Reduced inequalities','Responsible consumption'], about:'Fashion school and manufacturer employing people from refugee backgrounds in ethical, local production.', trail:[{date:'18 APR 2026',text:'Manufactured 600 garments locally, all ethical labour',loops:'↺ 90 loops'},{date:'8 MAR 2026',text:'Free fashion workshop for new arrivals',loops:'↺ 25 loops'}]},
+  commonfolk: { img:'C', award:'FOUNDING PARTNER', name:'COMMONFOLK', loops:'280', contributions:'4', sdgs:['No poverty','Zero hunger'], about:'Melbourne CBD café and founding partner of Just Do Good Sh*t. 20¢ from every coffee goes directly to the community fund.', trail:[{date:'25 APR 2026',text:'20¢ per coffee — 1,400 coffees poured this month',loops:'↺ 140 loops'},{date:'15 APR 2026',text:'End-of-day surplus donated to SecondBite pickup',loops:'↺ 60 loops'},{date:'1 APR 2026',text:'Staff volunteered at CBD vet clinic',loops:'↺ 50 loops'},{date:'8 MAR 2026',text:'Hosted community breakfast for rough sleepers',loops:'↺ 30 loops'}]}
+};
+const screens = ['heroes','map','board','why'];
+function switchScreen(name) {
+  screens.forEach(s => {
+    document.getElementById('screen-'+s).classList.toggle('active', s===name);
+    const lbl = document.getElementById('nav-'+s);
+    const ico = document.getElementById('icon-'+s);
+    const isActive = s===name;
+    lbl.className = 'nav-label' + (isActive?' active':'');
+    ico.className = ico.className.replace(' active','') + (isActive?' active':'');
+  });
+  document.getElementById('profile-overlay').classList.remove('open');
+  document.querySelector('.scroll-area').scrollTop = 0;
+}
+function openProfile(key) {
+  const p = profiles[key];
+  document.getElementById('profile-img').textContent = p.img;
+  document.getElementById('profile-award').textContent = p.award;
+  document.getElementById('profile-name').textContent = p.name;
+  document.getElementById('profile-loops').textContent = p.loops;
+  document.getElementById('profile-loops-stat').textContent = p.loops;
+  document.getElementById('profile-contributions').textContent = p.contributions;
+  document.getElementById('profile-about').textContent = p.about;
+  document.getElementById('profile-sdgs').innerHTML = p.sdgs.map(s=>`<span class="profile-sdg">${s}</span>`).join('');
+  document.getElementById('profile-contribution-list').innerHTML = p.trail.map(t=>`<div class="contribution-item"><div class="contribution-date">${t.date}</div><div class="contribution-text">${t.text}</div><div class="contribution-loops">${t.loops}</div></div>`).join('');
+  const overlay = document.getElementById('profile-overlay');
+  overlay.classList.add('open');
+  overlay.scrollTop = 0;
+}
+function closeProfile() {
+  document.getElementById('profile-overlay').classList.remove('open');
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeProfile(); });
+</script>
